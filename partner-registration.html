@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Become a Partner | PartnerDesk Solutions</title>
+
+  <meta name="description"
+        content="Join PartnerDesk Solutions as a service partner.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f8fc;
+      color: #172033;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5eaf1;
+    }
+
+    .nav {
+      width: 90%;
+      max-width: 1150px;
+      margin: auto;
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #102a56;
+    }
+
+    .logo span {
+      color: #10a6a6;
+    }
+
+    .back {
+      color: #102a56;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .back:hover {
+      color: #10a6a6;
+    }
+
+    .page {
+      width: 90%;
+      max-width: 1100px;
+      margin: 50px auto 80px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e2f8f7;
+      color: #087c7c;
+      padding: 7px 15px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .intro h1 {
+      color: #102a56;
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .intro p {
+      color: #697586;
+      max-width: 650px;
+      margin: auto;
+    }
+
+    .form-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 40px;
+      box-shadow: 0 15px 45px rgba(16,42,86,0.08);
+      border: 1px solid #e4eaf1;
+    }
+
+    .section {
+      margin-bottom: 35px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #102a56;
+      font-size: 21px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e7ebf1;
+    }
+
+    .section-number {
+      width: 30px;
+      height: 30px;
+      background: #102a56;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #26344a;
+      margin-bottom: 7px;
+    }
+
+    .required {
+      color: #d94141;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #d6dde7;
+      border-radius: 8px;
+      padding: 13px 14px;
+      font-size: 14px;
+      color: #172033;
+      background: #ffffff;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #10a6a6;
+      box-shadow: 0 0 0 3px rgba(16,166,166,0.10);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .check {
+      border: 1px solid #e0e6ee;
+      padding: 13px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fafbfd;
+    }
+
+    .check input {
+      width: auto;
+    }
+
+    .check label {
+      margin: 0;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .upload {
+      border: 2px dashed #cbd5e1;
+      padding: 22px;
+      border-radius: 10px;
+      text-align: center;
+      background: #fafcfe;
+    }
+
+    .upload p {
+      color: #697586;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .agreement {
+      background: #f4f8fc;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 25px;
+    }
+
+    .agreement label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .agreement input {
+      width: auto;
+      margin-top: 5px;
+    }
+
+    .submit-area {
+      text-align: center;
+    }
+
+    .submit-btn {
+      border: none;
+      background: #102a56;
+      color: #ffffff;
+      padding: 15px 40px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #10a6a6;
+    }
+
+    .note {
+      margin-top: 12px;
+      color: #7a8595;
+      font-size: 12px;
+    }
+
+    .success {
+      display: none;
+      margin-top: 25px;
+      padding: 20px;
+      background: #e8f8f1;
+      border: 1px solid #b9e7d0;
+      border-radius: 10px;
+      text-align: center;
+      color: #176b45;
+    }
+
+    .success strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    footer {
+      background: #0b1d3a;
+      color: #bfc9d8;
+      text-align: center;
+      padding: 25px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+
+      .intro h1 {
+        font-size: 34px;
+      }
+
+      .form-card {
+        padding: 25px 18px;
+      }
+
+      .grid,
+      .services {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+
+    <div class="nav">
+
+      <a href="index.html" class="logo">
+        PartnerDesk<span> Solutions</span>
+      </a>
+
+      <a href="index.html" class="back">
+        ← Back to Website
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <main class="page">
+
+    <div class="intro">
+
+      <div class="badge">
+        PARTNER NETWORK
+      </div>
+
+      <h1>Become a Partner</h1>
+
+      <p>
+        Join PartnerDesk Solutions and build your digital
+        service business through a structured service network.
+      </p>
+
+    </div>
+
+
+    <div class="form-card">
+
+      <form id="partnerForm">
+
+
+        <!-- PERSONAL INFORMATION -->
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="section-number">1</span>
+            Partner Information
+          </div>
+
+          <div class="grid">
+
+            <div>
+              <label>
+                Full Name <span class="required">*</span>
+              </label>
+
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your full name"
+                required>
+            </div>
+
+
+            <div>
+              <label>
+                Business Name
+              </label>
+
+              <input
+                type="text"
+                name="business"
+                placeholder="Enter business name">
+            </div>
+
+
+            <div>
+              <label>
+                Mobile Number <span class="required">*</span>
+              </label>
+
+              <input
+                type="tel"
+                name="mobile"
+                placeholder="10-digit mobile number"
+                maxlength="10"
+                required>
+            </div>
+
+
+            <div>
+              <label>
+                Email Address
+              </label>
+
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter email address">
+            </div>
+
+
+            <div class="full">
+
+              <label>
+                Address <span class="required">*</span>
+              </label>
+
+              <textarea
+                name="address"
+                placeholder="Enter complete address"
+                required></textarea>
+
+            </div>
+
+
+            <div>
+
+              <label>
+                District <span class="required">*</span>
+              </label>
+
+              <input
+                type="text"
+                name="district"
+                placeholder="Enter district"
+                required>
+
+            </div>
+
+
+            <div>
+
+              <label>
+                State
+              </label>
+
+              <input
+                type="text"
+                name="state"
+                value="Assam">
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- BUSINESS INFORMATION -->
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="section-number">2</span>
+            Business Information
+          </div>
+
+
+          <div class="grid">
+
+            <div>
+
+              <label>
+                Business Type <span class="required">*</span>
+              </label>
+
+              <select name="businessType" required>
+
+                <option value="">
+                  Select business type
+                </option>
+
+                <option>CSC / Digital Centre</option>
+
+                <option>Retail Shop</option>
+
+                <option>Agency</option>
+
+                <option>Professional</option>
+
+                <option>Other</option>
+
+              </select>
+
+            </div>
+
+
+            <div>
+
+              <label>
+                Years in Business
+              </label>
+
+              <select name="experience">
+
+                <option value="">
+                  Select
+                </option>
+
+                <option>Less than 1 year</option>
+
+                <option>1–3 years</option>
+
+                <option>3–5 years</option>
+
+                <option>5+ years</option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- SERVICES -->
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="section-number">3</span>
+            Services Interested In
+          </div>
+
+
+          <div class="services">
+
+            <div class="check">
+              <input
+                type="checkbox"
+                id="government"
+                name="services"
+                value="Government Services">
+
+              <label for="government">
+                Government Services
+              </label>
+            </div>
+
+
+            <div class="check">
+              <input
+                type="checkbox"
+                id="businessServices"
+                name="services"
+                value="Business Services">
+
+              <label for="businessServices">
+                Business Services
+              </label>
+            </div>
+
+
+            <div class="check">
+              <input
+                type="checkbox"
+                id="digital"
+                name="services"
+                value="Digital Services">
+
+              <label for="digital">
+                Digital Services
+              </label>
+            </div>
+
+
+            <div class="check">
+              <input
+                type="checkbox"
+                id="professional"
+                name="services"
+                value="Professional Support">
+
+              <label for="professional">
+                Professional Support
+              </label>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- KYC -->
+
+        <div class="section">
+
+          <div class="section-title">
+            <span class="section-number">4</span>
+            KYC Documents
+          </div>
+
+
+          <div class="grid">
+
+            <div class="upload">
+
+              <label>
+                ID Proof
+              </label>
+
+              <input
+                type="file"
+                name="idProof"
+                accept=".pdf,.jpg,.jpeg,.png">
+
+              <p>
+                PDF / JPG / PNG
+              </p>
+
+            </div>
+
+
+            <div class="upload">
+
+              <label>
+                Address Proof
+              </label>
+
+              <input
+                type="file"
+                name="addressProof"
+                accept=".pdf,.jpg,.jpeg,.png">
+
+              <p>
+                PDF / JPG / PNG
+              </p>
+
+            </div>
+
+
+            <div class="upload full">
+
+              <label>
+                Passport Photo
+              </label>
+
+              <input
+                type="file"
+                name="photo"
+                accept=".jpg,.jpeg,.png">
+
+              <p>
+                JPG / PNG
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- AGREEMENT -->
+
+        <div class="agreement">
+
+          <label>
+
+            <input
+              type="checkbox"
+              required>
+
+            <span>
+              I confirm that the information provided by me
+              is correct and I agree to the PartnerDesk Solutions
+              partner terms and verification process.
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <div class="submit-area">
+
+          <button
+            type="submit"
+            class="submit-btn">
+
+            SUBMIT PARTNER APPLICATION
+
+          </button>
+
+          <div class="note">
+            Your application will be reviewed by our team.
+          </div>
+
+        </div>
+
+
+        <div class="success" id="successMessage">
+
+          <strong>Application Received</strong>
+
+          Your Partner application has been submitted successfully.
+
+          <br><br>
+
+          Application ID:
+          <strong id="applicationId"></strong>
+
+        </div>
+
+
+      </form>
+
+    </div>
+
+  </main>
+
+
+  <footer>
+
+    © 2026 PartnerDesk Solutions. All Rights Reserved.
+
+  </footer>
+
+
+  <script>
+
+    document
+      .getElementById("partnerForm")
+      .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const randomNumber =
+          Math.floor(10000 + Math.random() * 90000);
+
+        const applicationId =
+          "PDS-P-2026-" + randomNumber;
+
+        document
+          .getElementById("applicationId")
+          .textContent = applicationId;
+
+        document
+          .getElementById("successMessage")
+          .style.display = "block";
+
+        document
+          .getElementById("successMessage")
+          .scrollIntoView({
+            behavior: "smooth"
+          });
+
+      });
+
+  </script>
+
+</body>
+</html>
