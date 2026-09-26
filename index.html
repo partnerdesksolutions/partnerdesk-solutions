@@ -1,1 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>PartnerDesk Solutions | One Desk. Multiple Solutions.</title>
+
+  <meta name="description"
+        content="PartnerDesk Solutions - One Desk. Multiple Solutions. Government, Business, Digital and Professional Services.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #172033;
+      background: #ffffff;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    /* NAVBAR */
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e8edf3;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #102a56;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: #10a6a6;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    nav a:hover {
+      color: #10a6a6;
+    }
+
+    .nav-button {
+      background: #102a56;
+      color: #ffffff;
+      padding: 11px 18px;
+      border-radius: 7px;
+    }
+
+    .nav-button:hover {
+      background: #10a6a6;
+      color: #ffffff;
+    }
+
+    /* HERO */
+
+    .hero {
+      background: linear-gradient(135deg, #f5f9ff 0%, #eefafa 100%);
+      padding: 95px 0;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e2f8f7;
+      color: #087c7c;
+      padding: 7px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(42px, 6vw, 68px);
+      line-height: 1.05;
+      color: #102a56;
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    }
+
+    .hero h1 span {
+      color: #10a6a6;
+    }
+
+    .hero p {
+      font-size: 19px;
+      color: #5d6878;
+      max-width: 650px;
+      margin-bottom: 32px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 23px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: #102a56;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #10a6a6;
+    }
+
+    .btn-secondary {
+      border: 1px solid #ccd5e2;
+      background: white;
+      color: #102a56;
+    }
+
+    .btn-secondary:hover {
+      border-color: #10a6a6;
+      color: #087c7c;
+    }
+
+    /* HERO CARD */
+
+    .hero-card {
+      background: #102a56;
+      color: white;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(16, 42, 86, 0.18);
+    }
+
+    .hero-card h3 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .service-mini {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .service-mini:last-child {
+      border-bottom: none;
+    }
+
+    .service-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: #10a6a6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* SECTIONS */
+
+    section {
+      padding: 80px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .section-title h2 {
+      color: #102a56;
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      color: #697586;
+    }
+
+    /* SERVICES */
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .service-card {
+      border: 1px solid #e4e9f0;
+      border-radius: 14px;
+      padding: 28px 22px;
+      background: white;
+      transition: 0.25s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(16,42,86,0.09);
+      border-color: #b9e8e6;
+    }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .service-card h3 {
+      color: #102a56;
+      margin-bottom: 8px;
+      font-size: 19px;
+    }
+
+    .service-card p {
+      color: #697586;
+      font-size: 14px;
+    }
+
+    /* HOW IT WORKS */
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 25px;
+    }
+
+    .step-number {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #102a56;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-weight: bold;
+    }
+
+    .step h3 {
+      color: #102a56;
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      color: #697586;
+      font-size: 14px;
+    }
+
+    /* CTA */
+
+    .cta {
+      background: #102a56;
+      color: white;
+      text-align: center;
+      padding: 75px 20px;
+    }
+
+    .cta h2 {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .cta p {
+      color: #d8e2f0;
+      margin-bottom: 28px;
+    }
+
+    .cta .btn-primary {
+      background: #10a6a6;
+    }
+
+    .cta .btn-primary:hover {
+      background: white;
+      color: #102a56;
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #0b1d3a;
+      color: #bfc9d8;
+      padding: 45px 0 25px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 35px;
+      margin-bottom: 35px;
+    }
+
+    footer h3,
+    footer h4 {
+      color: white;
+      margin-bottom: 13px;
+    }
+
+    footer p,
+    footer a {
+      font-size: 14px;
+    }
+
+    footer a:hover {
+      color: #10a6a6;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding-top: 20px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 900px) {
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .hero {
+        padding: 65px 0;
+      }
+
+      section {
+        padding: 60px 0;
+      }
+
+      .hero h1 {
+        font-size: 43px;
+      }
+
+      .services-grid,
+      .steps,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVIGATION -->
+
+  <header>
+    <div class="container navbar">
+
+      <a href="#" class="logo">
+        PartnerDesk<span> Solutions</span>
+      </a>
+
+      <nav>
+        <a href="#services">Services</a>
+        <a href="#how">How It Works</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="#partner" class="nav-button">Become a Partner</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="container hero-grid">
+
+      <div>
+
+        <div class="badge">
+          DIGITAL SERVICE PARTNER NETWORK
+        </div>
+
+        <h1>
+          One Desk.<br>
+          <span>Multiple Solutions.</span>
+        </h1>
+
+        <p>
+          A professional service network connecting Partners,
+          Customers and Service Operators through one simple platform.
+        </p>
+
+        <div class="hero-buttons">
+
+          <a href="#partner" class="btn btn-primary">
+            BECOME A PARTNER
+          </a>
+
+          <a href="#services" class="btn btn-secondary">
+            EXPLORE SERVICES
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="hero-card">
+
+        <h3>Our Service Network</h3>
+
+        <div class="service-mini">
+          <div class="service-icon">G</div>
+          <div>Government Services</div>
+        </div>
+
+        <div class="service-mini">
+          <div class="service-icon">B</div>
+          <div>Business Services</div>
+        </div>
+
+        <div class="service-mini">
+          <div class="service-icon">D</div>
+          <div>Digital Services</div>
+        </div>
+
+        <div class="service-mini">
+          <div class="service-icon">P</div>
+          <div>Professional Support</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SERVICES -->
+
+  <section id="services">
+
+    <div class="container">
+
+      <div class="section-title">
+
+        <h2>Our Services</h2>
+
+        <p>
+          Multiple services. One trusted platform.
+        </p>
+
+      </div>
+
+
+      <div class="services-grid">
+
+        <div class="service-card">
+
+          <div class="card-icon">🏛️</div>
+
+          <h3>Government Services</h3>
+
+          <p>
+            PAN, certificates, government applications,
+            land-related services and more.
+          </p>
+
+        </div>
+
+
+        <div class="service-card">
+
+          <div class="card-icon">💼</div>
+
+          <h3>Business Services</h3>
+
+          <p>
+            GST, ITR, MSME, business registration,
+            compliance and related support.
+          </p>
+
+        </div>
+
+
+        <div class="service-card">
+
+          <div class="card-icon">💻</div>
+
+          <h3>Digital Services</h3>
+
+          <p>
+            DTP, graphic design, website, data entry
+            and online application services.
+          </p>
+
+        </div>
+
+
+        <div class="service-card">
+
+          <div class="card-icon">🤝</div>
+
+          <h3>Professional Support</h3>
+
+          <p>
+            Documentation, application processing
+            and professional service assistance.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- HOW IT WORKS -->
+
+  <section id="how" style="background:#f7f9fc;">
+
+    <div class="container">
+
+      <div class="section-title">
+
+        <h2>How PartnerDesk Works</h2>
+
+        <p>
+          Simple process. Transparent tracking.
+        </p>
+
+      </div>
+
+
+      <div class="steps">
+
+        <div class="step">
+
+          <div class="step-number">1</div>
+
+          <h3>Partner</h3>
+
+          <p>
+            Register and become a PartnerDesk service partner.
+          </p>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">2</div>
+
+          <h3>Order</h3>
+
+          <p>
+            Submit customer service requests through the platform.
+          </p>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">3</div>
+
+          <h3>Processing</h3>
+
+          <p>
+            Our assigned operator processes and verifies the request.
+          </p>
+
+        </div>
+
+
+        <div class="step">
+
+          <div class="step-number">4</div>
+
+          <h3>Delivery</h3>
+
+          <p>
+            Track the order until the service is completed.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ABOUT -->
+
+  <section id="about">
+
+    <div class="container">
+
+      <div class="section-title">
+
+        <h2>Why PartnerDesk?</h2>
+
+        <p>
+          Built to simplify digital service operations.
+        </p>
+
+      </div>
+
+      <div class="services-grid">
+
+        <div class="service-card">
+          <h3>Centralized Platform</h3>
+          <p>
+            Manage services, customers and orders from one platform.
+          </p>
+        </div>
+
+        <div class="service-card">
+          <h3>Order Tracking</h3>
+          <p>
+            Track every service request from submission to completion.
+          </p>
+        </div>
+
+        <div class="service-card">
+          <h3>Partner Network</h3>
+          <p>
+            Connect Partners with a structured service delivery system.
+          </p>
+        </div>
+
+        <div class="service-card">
+          <h3>Transparent Records</h3>
+          <p>
+            Maintain organized service, payment and transaction records.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- PARTNER CTA -->
+
+  <section id="partner" class="cta">
+
+    <div class="container">
+
+      <h2>Become a Partner</h2>
+
+      <p>
+        Build your service business with PartnerDesk Solutions.
+      </p>
+
+      <a href="#" class="btn btn-primary">
+        PARTNER REGISTRATION
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER -->
+
+  <footer id="contact">
+
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div>
+
+          <h3>PartnerDesk Solutions</h3>
+
+          <p>
+            One Desk. Multiple Solutions.
+          </p>
+
+          <p style="margin-top:12px;">
+            A digital service network for Partners,
+            Customers and Service Operators.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h4>Services</h4>
+
+          <p><a href="#services">Government</a></p>
+          <p><a href="#services">Business</a></p>
+          <p><a href="#services">Digital</a></p>
+          <p><a href="#services">Professional</a></p>
+
+        </div>
+
+
+        <div>
+
+          <h4>Partner</h4>
+
+          <p><a href="#partner">Become a Partner</a></p>
+          <p><a href="#">Partner Login</a></p>
+          <p><a href="#">Track Order</a></p>
+
+        </div>
+
+
+        <div>
+
+          <h4>Contact</h4>
+
+          <p>Email: partnersdesk.info@gmail.com</p>
+          <p>Support: Coming Soon</p>
+
+        </div>
+
+      </div>
+
+
+      <div class="footer-bottom">
+
+        © 2026 PartnerDesk Solutions. All Rights Reserved.
+
+      </div>
+
+    </div>
+
+  </footer>
+
+</body>
+</html>
