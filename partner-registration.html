@@ -745,8 +745,151 @@
 
         event.preventDefault();
 
-        const randomNumber =
-          Math.floor(10000 + Math.random() * 90000);
+const SUPABASE_URL = "https://mraofbhjvvuqncexzpfn.supabase.co/rest/v1/";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+document
+  .getElementById("partnerForm")
+  .addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const submitButton =
+      document.querySelector(".submit-btn");
+
+    const form = event.target;
+
+    submitButton.disabled = true;
+    submitButton.textContent = "SUBMITTING...";
+
+    try {
+
+      const formData = new FormData(form);
+
+      const selectedServices =
+        Array.from(
+          document.querySelectorAll(
+            'input[name="services"]:checked'
+          )
+        ).map(function (item) {
+          return item.value;
+        });
+
+      const applicationId =
+        "PDS-P-2026-" +
+        Date.now().toString().slice(-8);
+
+      const applicationData = {
+
+        application_id: applicationId,
+
+        full_name:
+          formData.get("name"),
+
+        business_name:
+          formData.get("business"),
+
+        mobile:
+          formData.get("mobile"),
+
+        email:
+          formData.get("email"),
+
+        address:
+          formData.get("address"),
+
+        district:
+          formData.get("district"),
+
+        state:
+          formData.get("state") || "Assam",
+
+        business_type:
+          formData.get("businessType"),
+
+        experience:
+          formData.get("experience"),
+
+        services:
+          selectedServices,
+
+        status: "PENDING"
+      };
+
+
+      const response = await fetch(
+        SUPABASE_URL +
+        "/rest/v1/partner_applications",
+        {
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "apikey":
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Authorization":
+              "Bearer " +
+              SUPABASE_PUBLISHABLE_KEY,
+
+            "Prefer":
+              "return=minimal"
+          },
+
+          body:
+            JSON.stringify(applicationData)
+        }
+      );
+
+
+      if (!response.ok) {
+
+        const errorText =
+          await response.text();
+
+        throw new Error(errorText);
+      }
+
+
+      document
+        .getElementById("applicationId")
+        .textContent = applicationId;
+
+      document
+        .getElementById("successMessage")
+        .style.display = "block";
+
+      document
+        .getElementById("successMessage")
+        .scrollIntoView({
+          behavior: "smooth"
+        });
+
+      form.reset();
+
+      submitButton.textContent =
+        "APPLICATION SUBMITTED";
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Application submit হোৱা নাই। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।"
+      );
+
+      submitButton.disabled = false;
+
+      submitButton.textContent =
+        "SUBMIT PARTNER APPLICATION";
+    }
+
+  });
 
         const applicationId =
           "PDS-P-2026-" + randomNumber;
