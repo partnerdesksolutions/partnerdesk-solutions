@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Panel | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fc;
+  color:#172033;
+}
+
+.header{
+  background:#102a56;
+  color:white;
+  padding:18px 5%;
+  font-size:22px;
+  font-weight:800;
+}
+
+.header span{
+  color:#10a6a6;
+}
+
+.login-box{
+  max-width:420px;
+  margin:80px auto;
+  background:white;
+  padding:30px;
+  border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+h1{
+  color:#102a56;
+  margin-bottom:10px;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:16px 0 7px;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  border:1px solid #d5dce5;
+  border-radius:8px;
+}
+
+button{
+  padding:12px 18px;
+  border:0;
+  border-radius:8px;
+  background:#102a56;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.login-btn{
+  width:100%;
+  margin-top:20px;
+}
+
+.error{
+  color:#b42318;
+  margin-top:12px;
+}
+
+.dashboard{
+  display:none;
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin:25px 0;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.card strong{
+  display:block;
+  font-size:28px;
+  color:#102a56;
+  margin-top:7px;
+}
+
+.table-box{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:13px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+  white-space:nowrap;
+}
+
+th{
+  background:#f8fafc;
+  color:#344054;
+}
+
+.logout{
+  margin-top:20px;
+}
+
+@media(max-width:700px){
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  PartnerDesk <span>Solutions</span> — Admin
+</div>
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="login-box">
+
+  <h1>Admin Login</h1>
+
+  <p>PartnerDesk Solutions Management Panel</p>
+
+  <label>Email</label>
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Admin email"
+  >
+
+  <label>Password</label>
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Password"
+  >
+
+  <button
+    id="loginBtn"
+    class="login-btn"
+  >
+    LOGIN
+  </button>
+
+  <div id="error" class="error"></div>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="dashboard">
+
+  <h1>Partner Applications</h1>
+
+  <p>Manage PartnerDesk partner applications.</p>
+
+
+  <div class="cards">
+
+    <div class="card">
+      Total Applications
+      <strong id="total">0</strong>
+    </div>
+
+    <div class="card">
+      Pending
+      <strong id="pending">0</strong>
+    </div>
+
+    <div class="card">
+      Under Review
+      <strong id="review">0</strong>
+    </div>
+
+    <div class="card">
+      Approved
+      <strong id="approved">0</strong>
+    </div>
+
+  </div>
+
+
+  <div class="table-box">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Application ID</th>
+          <th>Name</th>
+          <th>Business</th>
+          <th>District</th>
+          <th>Status</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="rows">
+
+      </tbody>
+
+    </table>
+
+    <button
+      id="logoutBtn"
+      class="logout"
+    >
+      LOGOUT
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* ==============================
+   SUPABASE CONFIG
+   ============================== */
+
+/*
+IMPORTANT:
+
+Copy these TWO values from your
+working partner-registration.html
+
+Do NOT change the format.
+*/
+
+const SUPABASE_URL = "https://mraofbhjvvuqncexzpfn.supabase.co/rest/v1/";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+/* ==============================
+   LOAD APPLICATIONS
+   ============================== */
+
+async function loadApplications(){
+
+  const {
+    data,
+    error
+  } = await db
+    .from("partner_applications")
+    .select("*")
+    .order("created_at", {
+      ascending:false
+    });
+
+
+  if(error){
+
+    document.getElementById("error")
+      .textContent = error.message;
+
+    console.error(error);
+
+    return;
+  }
+
+
+  document.getElementById("total")
+    .textContent = data.length;
+
+
+  document.getElementById("pending")
+    .textContent =
+      data.filter(
+        x => x.status === "PENDING"
+      ).length;
+
+
+  document.getElementById("review")
+    .textContent =
+      data.filter(
+        x => x.status === "UNDER_REVIEW"
+      ).length;
+
+
+  document.getElementById("approved")
+    .textContent =
+      data.filter(
+        x => x.status === "APPROVED"
+      ).length;
+
+
+  document.getElementById("rows")
+    .innerHTML = data.map(x => `
+
+      <tr>
+
+        <td>
+          ${x.application_id || ""}
+        </td>
+
+        <td>
+          ${x.full_name || ""}
+        </td>
+
+        <td>
+          ${x.business_name || ""}
+        </td>
+
+        <td>
+          ${x.district || ""}
+        </td>
+
+        <td>
+          ${x.status || ""}
+        </td>
+
+      </tr>
+
+    `).join("");
+
+}
+
+
+/* ==============================
+   LOGIN
+   ============================== */
+
+document
+  .getElementById("loginBtn")
+  .onclick = async function(){
+
+    const email =
+      document.getElementById("email").value;
+
+    const password =
+      document.getElementById("password").value;
+
+
+    const {
+      error
+    } = await db.auth.signInWithPassword({
+
+      email:email,
+
+      password:password
+
+    });
+
+
+    if(error){
+
+      document.getElementById("error")
+        .textContent = error.message;
+
+      return;
+    }
+
+
+    document.getElementById("loginBox")
+      .style.display = "none";
+
+
+    document.getElementById("dashboard")
+      .style.display = "block";
+
+
+    loadApplications();
+
+};
+
+
+/* ==============================
+   LOGOUT
+   ============================== */
+
+document
+  .getElementById("logoutBtn")
+  .onclick = async function(){
+
+    await db.auth.signOut();
+
+    location.reload();
+
+};
+
+
+</script>
+
+</body>
+</html>
