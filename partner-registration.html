@@ -877,17 +877,19 @@ document
 
     catch (error) {
 
-      console.error(error);
+  console.error("SUPABASE ERROR:", error);
 
-      alert(
-        "Application submit হোৱা নাই। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।"
-      );
+  alert(
+    "Application submit হোৱা নাই.\n\n" +
+    "Error:\n" +
+    error.message
+  );
 
-      submitButton.disabled = false;
+  submitButton.disabled = false;
 
-      submitButton.textContent =
-        "SUBMIT PARTNER APPLICATION";
-    }
+  submitButton.textContent =
+    "SUBMIT PARTNER APPLICATION";
+}
 
   });
 
