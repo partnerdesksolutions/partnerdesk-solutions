@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Orders | PartnerDesk Solutions</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172033;
+}
+
+header{
+  background:#0b1f3a;
+  color:white;
+  padding:18px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:700;
+}
+
+.logo span{
+  color:#f5b642;
+}
+
+.logout{
+  background:#fff;
+  color:#0b1f3a;
+  border:0;
+  padding:9px 15px;
+  border-radius:7px;
+  cursor:pointer;
+}
+
+.container{
+  max-width:1400px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+h1{
+  margin-bottom:6px;
+}
+
+.subtitle{
+  color:#687386;
+  margin-bottom:25px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.stat-title{
+  color:#687386;
+  font-size:14px;
+}
+
+.stat-value{
+  font-size:28px;
+  font-weight:700;
+  margin-top:8px;
+}
+
+.filters{
+  background:white;
+  padding:18px;
+  border-radius:12px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+input,select{
+  padding:11px 13px;
+  border:1px solid #d8dde6;
+  border-radius:7px;
+  font-size:14px;
+}
+
+.search{
+  flex:1;
+  min-width:220px;
+}
+
+button{
+  border:0;
+  border-radius:7px;
+  padding:11px 16px;
+  cursor:pointer;
+}
+
+.refresh{
+  background:#0b1f3a;
+  color:white;
+}
+
+.table-wrap{
+  background:white;
+  border-radius:12px;
+  overflow:auto;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1000px;
+}
+
+th,td{
+  padding:14px;
+  text-align:left;
+  border-bottom:1px solid #edf0f4;
+  font-size:14px;
+}
+
+th{
+  background:#f8fafc;
+  font-size:13px;
+}
+
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.NEW{background:#e8f1ff;color:#1769aa}
+.ASSIGNED{background:#fff3cd;color:#856404}
+.PROCESSING{background:#e8eaff;color:#4338ca}
+.DOCUMENT_REQUIRED{background:#fff0e6;color:#c2410c}
+.VERIFICATION{background:#e0f2fe;color:#0369a1}
+.COMPLETED{background:#dcfce7;color:#15803d}
+.DELIVERED{background:#d1fae5;color:#047857}
+.REJECTED{background:#fee2e2;color:#b91c1c}
+
+.view-btn{
+  background:#0b1f3a;
+  color:white;
+  padding:7px 12px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:650px;
+  max-height:90vh;
+  overflow:auto;
+  border-radius:14px;
+  padding:25px;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+
+.close{
+  background:#eee;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.detail{
+  background:#f8fafc;
+  padding:12px;
+  border-radius:8px;
+}
+
+.detail small{
+  display:block;
+  color:#687386;
+  margin-bottom:5px;
+}
+
+textarea{
+  width:100%;
+  min-height:90px;
+  padding:12px;
+  border:1px solid #d8dde6;
+  border-radius:7px;
+  resize:vertical;
+}
+
+.save{
+  background:#0b1f3a;
+  color:white;
+  width:100%;
+  margin-top:15px;
+}
+
+.message{
+  padding:15px;
+  text-align:center;
+  color:#687386;
+}
+
+@media(max-width:900px){
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:600px){
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:0 12px;
+  }
+
+  .detail-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    Partner<span>Desk</span> Solutions
+  </div>
+
+  <button class="logout" onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+  <h1>Order Management</h1>
+  <p class="subtitle">
+    Manage partner orders, status and payment
+  </p>
+
+  <div class="stats">
+
+    <div class="card">
+      <div class="stat-title">Total Orders</div>
+      <div class="stat-value" id="totalOrders">0</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-title">New</div>
+      <div class="stat-value" id="newOrders">0</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-title">Processing</div>
+      <div class="stat-value" id="processingOrders">0</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-title">Completed</div>
+      <div class="stat-value" id="completedOrders">0</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-title">Payment Due</div>
+      <div class="stat-value" id="dueOrders">0</div>
+    </div>
+
+  </div>
+
+  <div class="filters">
+
+    <input
+      id="searchInput"
+      class="search"
+      placeholder="Search Order ID, Customer or Mobile..."
+      oninput="renderOrders()"
+    >
+
+    <select id="statusFilter" onchange="renderOrders()">
+      <option value="">All Status</option>
+      <option value="NEW">NEW</option>
+      <option value="ASSIGNED">ASSIGNED</option>
+      <option value="PROCESSING">PROCESSING</option>
+      <option value="DOCUMENT_REQUIRED">DOCUMENT REQUIRED</option>
+      <option value="VERIFICATION">VERIFICATION</option>
+      <option value="COMPLETED">COMPLETED</option>
+      <option value="DELIVERED">DELIVERED</option>
+      <option value="REJECTED">REJECTED</option>
+    </select>
+
+    <button class="refresh" onclick="loadOrders()">
+      Refresh
+    </button>
+
+  </div>
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Mobile</th>
+          <th>Service</th>
+          <th>Amount</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="ordersTable">
+        <tr>
+          <td colspan="9" class="message">
+            Loading orders...
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+<!-- ORDER MODAL -->
+
+<div class="modal" id="orderModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h2>Order Details</h2>
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="detail-grid">
+
+      <div class="detail">
+        <small>Order ID</small>
+        <strong id="mOrderId"></strong>
+      </div>
+
+      <div class="detail">
+        <small>Customer</small>
+        <strong id="mCustomer"></strong>
+      </div>
+
+      <div class="detail">
+        <small>Mobile</small>
+        <strong id="mMobile"></strong>
+      </div>
+
+      <div class="detail">
+        <small>Service</small>
+        <strong id="mService"></strong>
+      </div>
+
+      <div class="detail">
+        <small>Government Fee</small>
+        ₹<strong id="mGovFee"></strong>
+      </div>
+
+      <div class="detail">
+        <small>Processing Fee</small>
+        ₹<strong id="mProcessingFee"></strong>
+      </div>
+
+      <div class="detail">
+        <small>Total Amount</small>
+        ₹<strong id="mTotal"></strong>
+      </div>
+
+      <div class="detail">
+        <small>Current Payment</small>
+        <strong id="mPayment"></strong>
+      </div>
+
+    </div>
+
+    <label><strong>Order Status</strong></label>
+
+    <select id="mStatus" style="width:100%;margin:8px 0 15px;">
+      <option value="NEW">NEW</option>
+      <option value="ASSIGNED">ASSIGNED</option>
+      <option value="PROCESSING">PROCESSING</option>
+      <option value="DOCUMENT_REQUIRED">DOCUMENT REQUIRED</option>
+      <option value="VERIFICATION">VERIFICATION</option>
+      <option value="COMPLETED">COMPLETED</option>
+      <option value="DELIVERED">DELIVERED</option>
+      <option value="REJECTED">REJECTED</option>
+    </select>
+
+    <label><strong>Payment Status</strong></label>
+
+    <select id="mPaymentStatus" style="width:100%;margin:8px 0 15px;">
+      <option value="PAID">PAID</option>
+      <option value="PARTIAL">PARTIAL</option>
+      <option value="DUE">DUE</option>
+    </select>
+
+    <label><strong>Admin Remark</strong></label>
+
+    <textarea
+      id="mNotes"
+      placeholder="Enter admin remark..."
+    ></textarea>
+
+    <button class="save" onclick="saveOrder()">
+      SAVE CHANGES
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+let orders = [];
+let selectedOrder = null;
+
+
+/* SUPABASE REQUEST */
+
+async function supabaseRequest(endpoint, options={}){
+
+  const response = await fetch(
+    SUPABASE_URL + endpoint,
+    {
+      ...options,
+      headers:{
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer " + SUPABASE_KEY,
+        "Content-Type":"application/json",
+        ...(options.headers || {})
+      }
+    }
+  );
+
+  if(!response.ok){
+
+    const error = await response.text();
+
+    throw new Error(error);
+  }
+
+  return response.status === 204
+    ? null
+    : await response.json();
+}
+
+
+/* CHECK ADMIN LOGIN */
+
+async function checkAdmin(){
+
+  const token =
+    localStorage.getItem("admin_access_token");
+
+  if(!token){
+
+    window.location.href="admin.html";
+    return false;
+  }
+
+  return true;
+}
+
+
+/* LOAD ORDERS */
+
+async function loadOrders(){
+
+  try{
+
+    const token =
+      localStorage.getItem("admin_access_token");
+
+    if(!token){
+      window.location.href="admin.html";
+      return;
+    }
+
+    const response = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/orders?select=*&order=created_at.desc",
+      {
+        headers:{
+          "apikey":SUPABASE_KEY,
+          "Authorization":"Bearer " + token,
+          "Content-Type":"application/json"
+        }
+      }
+    );
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+    }
+
+    orders = await response.json();
+
+    updateStats();
+
+    renderOrders();
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById("ordersTable").innerHTML =
+      `<tr>
+        <td colspan="9" class="message">
+          Failed to load orders
+        </td>
+      </tr>`;
+  }
+}
+
+
+/* STATS */
+
+function updateStats(){
+
+  document.getElementById("totalOrders").textContent =
+    orders.length;
+
+  document.getElementById("newOrders").textContent =
+    orders.filter(o => o.order_status==="NEW").length;
+
+  document.getElementById("processingOrders").textContent =
+    orders.filter(o =>
+      o.order_status==="PROCESSING" ||
+      o.order_status==="ASSIGNED" ||
+      o.order_status==="VERIFICATION"
+    ).length;
+
+  document.getElementById("completedOrders").textContent =
+    orders.filter(o =>
+      o.order_status==="COMPLETED" ||
+      o.order_status==="DELIVERED"
+    ).length;
+
+  document.getElementById("dueOrders").textContent =
+    orders.filter(o =>
+      o.payment_status==="DUE" ||
+      o.payment_status==="PARTIAL"
+    ).length;
+}
+
+
+/* RENDER */
+
+function renderOrders(){
+
+  const search =
+    document.getElementById("searchInput")
+    .value
+    .toLowerCase();
+
+  const status =
+    document.getElementById("statusFilter")
+    .value;
+
+  const filtered = orders.filter(o => {
+
+    const matchesSearch =
+      !search ||
+      (o.order_id || "").toLowerCase().includes(search) ||
+      (o.customer_name || "").toLowerCase().includes(search) ||
+      (o.customer_mobile || "").includes(search);
+
+    const matchesStatus =
+      !status ||
+      o.order_status===status;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const table =
+    document.getElementById("ordersTable");
+
+  if(filtered.length===0){
+
+    table.innerHTML =
+      `<tr>
+        <td colspan="9" class="message">
+          No orders found
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  table.innerHTML =
+    filtered.map(o => `
+
+      <tr>
+
+        <td><strong>${o.order_id}</strong></td>
+
+        <td>${o.customer_name || "-"}</td>
+
+        <td>${o.customer_mobile || "-"}</td>
+
+        <td>${o.service_name || "-"}</td>
+
+        <td>₹${Number(o.total_amount || 0).toFixed(2)}</td>
+
+        <td>${o.payment_status || "-"}</td>
+
+        <td>
+          <span class="status ${o.order_status}">
+            ${formatStatus(o.order_status)}
+          </span>
+        </td>
+
+        <td>
+          ${formatDate(o.created_at)}
+        </td>
+
+        <td>
+          <button
+            class="view-btn"
+            onclick="viewOrder('${o.id}')">
+            VIEW
+          </button>
+        </td>
+
+      </tr>
+
+    `).join("");
+}
+
+
+/* VIEW ORDER */
+
+function viewOrder(id){
+
+  selectedOrder =
+    orders.find(o => o.id===id);
+
+  if(!selectedOrder) return;
+
+  document.getElementById("mOrderId").textContent =
+    selectedOrder.order_id;
+
+  document.getElementById("mCustomer").textContent =
+    selectedOrder.customer_name || "-";
+
+  document.getElementById("mMobile").textContent =
+    selectedOrder.customer_mobile || "-";
+
+  document.getElementById("mService").textContent =
+    selectedOrder.service_name || "-";
+
+  document.getElementById("mGovFee").textContent =
+    Number(selectedOrder.government_fee || 0).toFixed(2);
+
+  document.getElementById("mProcessingFee").textContent =
+    Number(selectedOrder.processing_fee || 0).toFixed(2);
+
+  document.getElementById("mTotal").textContent =
+    Number(selectedOrder.total_amount || 0).toFixed(2);
+
+  document.getElementById("mPayment").textContent =
+    selectedOrder.payment_status || "-";
+
+  document.getElementById("mStatus").value =
+    selectedOrder.order_status;
+
+  document.getElementById("mPaymentStatus").value =
+    selectedOrder.payment_status;
+
+  document.getElementById("mNotes").value =
+    selectedOrder.notes || "";
+
+  document.getElementById("orderModal").style.display =
+    "flex";
+}
+
+
+/* SAVE */
+
+async function saveOrder(){
+
+  if(!selectedOrder) return;
+
+  const status =
+    document.getElementById("mStatus").value;
+
+  const paymentStatus =
+    document.getElementById("mPaymentStatus").value;
+
+  const notes =
+    document.getElementById("mNotes").value;
+
+  try{
+
+    const token =
+      localStorage.getItem("admin_access_token");
+
+    const response = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/orders?id=eq." +
+      selectedOrder.id,
+      {
+        method:"PATCH",
+        headers:{
+          "apikey":SUPABASE_KEY,
+          "Authorization":"Bearer " + token,
+          "Content-Type":"application/json",
+          "Prefer":"return=representation"
+        },
+        body:JSON.stringify({
+          order_status:status,
+          payment_status:paymentStatus,
+          notes:notes,
+          updated_at:new Date().toISOString()
+        })
+      }
+    );
+
+    if(!response.ok){
+
+      throw new Error(
+        await response.text()
+      );
+    }
+
+    alert("Order updated successfully.");
+
+    closeModal();
+
+    loadOrders();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to update order."
+    );
+  }
+}
+
+
+/* CLOSE */
+
+function closeModal(){
+
+  document.getElementById("orderModal")
+    .style.display="none";
+
+  selectedOrder=null;
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+  localStorage.removeItem(
+    "admin_access_token"
+  );
+
+  window.location.href="admin.html";
+}
+
+
+/* HELPERS */
+
+function formatStatus(status){
+
+  if(!status) return "-";
+
+  return status
+    .replaceAll("_"," ")
+    .replace(/\b\w/g,c => c.toUpperCase());
+}
+
+function formatDate(date){
+
+  if(!date) return "-";
+
+  return new Date(date)
+    .toLocaleDateString("en-IN");
+}
+
+
+/* START */
+
+checkAdmin().then(ok => {
+
+  if(ok){
+    loadOrders();
+  }
+
+});
+
+</script>
+
+</body>
+</html>
