@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Operator Management | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172033;
+}
+
+header{
+  background:#0b1f3a;
+  color:white;
+  padding:18px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:700;
+}
+
+.logo span{
+  color:#10a6a6;
+}
+
+.logout{
+  background:white;
+  color:#0b1f3a;
+  border:0;
+  padding:9px 15px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.container{
+  max-width:1400px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+h1{
+  color:#0b1f3a;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  color:#687386;
+  margin-bottom:25px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.card-title{
+  color:#687386;
+  font-size:14px;
+}
+
+.card-value{
+  font-size:28px;
+  font-weight:700;
+  margin-top:8px;
+  color:#0b1f3a;
+}
+
+.panel{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.search{
+  flex:1;
+  min-width:240px;
+}
+
+input,select,textarea{
+  padding:11px 13px;
+  border:1px solid #d8dde6;
+  border-radius:7px;
+  font-size:14px;
+}
+
+button{
+  border:0;
+  border-radius:7px;
+  padding:11px 16px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.primary{
+  background:#0b1f3a;
+  color:white;
+}
+
+.secondary{
+  background:#eef3f9;
+  color:#0b1f3a;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:950px;
+}
+
+th,td{
+  padding:14px;
+  text-align:left;
+  border-bottom:1px solid #edf0f4;
+  font-size:14px;
+}
+
+th{
+  background:#f8fafc;
+  font-size:13px;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.ACTIVE{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+.INACTIVE{
+  background:#f1f5f9;
+  color:#475569;
+}
+
+.SUSPENDED{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:650px;
+  max-height:90vh;
+  overflow:auto;
+  border-radius:14px;
+  padding:25px;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close{
+  background:#eee;
+  color:#333;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.form-group{
+  margin-bottom:15px;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.form-group input,
+.form-group select{
+  width:100%;
+}
+
+.save{
+  width:100%;
+  margin-top:10px;
+  background:#0b1f3a;
+  color:white;
+}
+
+.message{
+  text-align:center;
+  padding:20px;
+  color:#687386;
+}
+
+@media(max-width:800px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:550px){
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:0 12px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    Partner<span>Desk</span> Solutions
+  </div>
+
+  <button class="logout" onclick="logout()">
+    Logout
+  </button>
+
+</header>
+
+
+<div class="container">
+
+  <h1>Operator Management</h1>
+
+  <p class="subtitle">
+    Create and manage service operators
+  </p>
+
+
+  <div class="stats">
+
+    <div class="card">
+      <div class="card-title">Total Operators</div>
+      <div class="card-value" id="totalOperators">0</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Active</div>
+      <div class="card-value" id="activeOperators">0</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Inactive</div>
+      <div class="card-value" id="inactiveOperators">0</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Suspended</div>
+      <div class="card-value" id="suspendedOperators">0</div>
+    </div>
+
+  </div>
+
+
+  <div class="panel">
+
+    <div class="toolbar">
+
+      <input
+        id="searchInput"
+        class="search"
+        placeholder="Search Operator ID, name, mobile..."
+        oninput="renderOperators()"
+      >
+
+      <select
+        id="statusFilter"
+        onchange="renderOperators()"
+      >
+        <option value="">All Status</option>
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+        <option value="SUSPENDED">SUSPENDED</option>
+      </select>
+
+      <button
+        class="primary"
+        onclick="openAddModal()"
+      >
+        + ADD OPERATOR
+      </button>
+
+      <button
+        class="secondary"
+        onclick="loadOperators()"
+      >
+        REFRESH
+      </button>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Operator ID</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>District</th>
+            <th>Specialization</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="operatorRows">
+
+          <tr>
+            <td colspan="7" class="message">
+              Loading operators...
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- OPERATOR MODAL -->
+
+<div class="modal" id="operatorModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2 id="modalTitle">
+        Add Operator
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label>Full Name</label>
+
+        <input
+          id="fullName"
+          placeholder="Operator full name"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Mobile</label>
+
+        <input
+          id="mobile"
+          placeholder="10 digit mobile"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Email</label>
+
+        <input
+          id="email"
+          type="email"
+          placeholder="Email address"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>District</label>
+
+        <input
+          id="district"
+          placeholder="District"
+        >
+
+      </div>
+
+
+      <div class="form-group full">
+
+        <label>Address</label>
+
+        <input
+          id="address"
+          placeholder="Full address"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Specialization</label>
+
+        <select id="specialization">
+
+          <option value="">
+            Select Specialization
+          </option>
+
+          <option value="Government Services">
+            Government Services
+          </option>
+
+          <option value="PAN / Tax">
+            PAN / Tax
+          </option>
+
+          <option value="Insurance">
+            Insurance
+          </option>
+
+          <option value="Business Services">
+            Business Services
+          </option>
+
+          <option value="Digital Services">
+            Digital Services
+          </option>
+
+          <option value="Document Processing">
+            Document Processing
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>Status</label>
+
+        <select id="operatorStatus">
+
+          <option value="ACTIVE">
+            ACTIVE
+          </option>
+
+          <option value="INACTIVE">
+            INACTIVE
+          </option>
+
+          <option value="SUSPENDED">
+            SUSPENDED
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="save"
+      onclick="saveOperator()"
+    >
+      SAVE OPERATOR
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+let operators = [];
+let editingId = null;
+
+
+/* =========================
+   ADMIN CHECK
+   ========================= */
+
+async function checkAdmin(){
+
+  const {
+    data,
+    error
+  } = await db.auth.getSession();
+
+  if(
+    error ||
+    !data.session
+  ){
+
+    window.location.href =
+      "admin.html";
+
+    return false;
+  }
+
+  return true;
+}
+
+
+/* =========================
+   LOAD OPERATORS
+   ========================= */
+
+async function loadOperators(){
+
+  try{
+
+    const ok =
+      await checkAdmin();
+
+    if(!ok) return;
+
+
+    const {
+      data,
+      error
+    } = await db
+      .from("operators")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+    if(error){
+
+      throw error;
+    }
+
+
+    operators =
+      data || [];
+
+
+    updateStats();
+
+    renderOperators();
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById(
+      "operatorRows"
+    ).innerHTML =
+
+      `<tr>
+        <td
+          colspan="7"
+          class="message"
+        >
+          Failed to load operators
+        </td>
+      </tr>`;
+
+  }
+
+}
+
+
+/* =========================
+   STATS
+   ========================= */
+
+function updateStats(){
+
+  document.getElementById(
+    "totalOperators"
+  ).textContent =
+    operators.length;
+
+
+  document.getElementById(
+    "activeOperators"
+  ).textContent =
+
+    operators.filter(
+      o => o.status === "ACTIVE"
+    ).length;
+
+
+  document.getElementById(
+    "inactiveOperators"
+  ).textContent =
+
+    operators.filter(
+      o => o.status === "INACTIVE"
+    ).length;
+
+
+  document.getElementById(
+    "suspendedOperators"
+  ).textContent =
+
+    operators.filter(
+      o => o.status === "SUSPENDED"
+    ).length;
+
+}
+
+
+/* =========================
+   RENDER
+   ========================= */
+
+function renderOperators(){
+
+  const search =
+    document.getElementById(
+      "searchInput"
+    )
+    .value
+    .toLowerCase();
+
+
+  const status =
+    document.getElementById(
+      "statusFilter"
+    ).value;
+
+
+  const filtered =
+    operators.filter(
+      operator => {
+
+        const text =
+          [
+            operator.operator_id,
+            operator.full_name,
+            operator.mobile,
+            operator.district,
+            operator.specialization
+          ]
+          .join(" ")
+          .toLowerCase();
+
+
+        return (
+
+          (!search ||
+            text.includes(search))
+
+          &&
+
+          (!status ||
+            operator.status === status)
+
+        );
+
+      }
+    );
+
+
+  const table =
+    document.getElementById(
+      "operatorRows"
+    );
+
+
+  if(!filtered.length){
+
+    table.innerHTML =
+
+      `<tr>
+        <td
+          colspan="7"
+          class="message"
+        >
+          No operators found
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+
+  table.innerHTML =
+    filtered.map(
+      operator => `
+
+      <tr>
+
+        <td>
+          <strong>
+            ${escapeHTML(
+              operator.operator_id
+            )}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHTML(
+            operator.full_name
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            operator.mobile
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            operator.district || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            operator.specialization || "-"
+          )}
+        </td>
+
+        <td>
+
+          <span
+            class="badge ${escapeHTML(
+              operator.status
+            )}"
+          >
+            ${escapeHTML(
+              operator.status
+            )}
+          </span>
+
+        </td>
+
+        <td>
+
+          <button
+            class="secondary"
+            onclick="editOperator(
+              '${operator.id}'
+            )"
+          >
+            EDIT
+          </button>
+
+        </td>
+
+      </tr>
+
+      `
+    ).join("");
+
+}
+
+
+/* =========================
+   ADD
+   ========================= */
+
+function openAddModal(){
+
+  editingId = null;
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent =
+    "Add Operator";
+
+
+  clearForm();
+
+
+  document.getElementById(
+    "operatorModal"
+  ).style.display =
+    "flex";
+
+}
+
+
+/* =========================
+   EDIT
+   ========================= */
+
+function editOperator(id){
+
+  const operator =
+    operators.find(
+      o => o.id === id
+    );
+
+
+  if(!operator) return;
+
+
+  editingId = id;
+
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent =
+    "Edit Operator";
+
+
+  document.getElementById(
+    "fullName"
+  ).value =
+    operator.full_name || "";
+
+
+  document.getElementById(
+    "mobile"
+  ).value =
+    operator.mobile || "";
+
+
+  document.getElementById(
+    "email"
+  ).value =
+    operator.email || "";
+
+
+  document.getElementById(
+    "district"
+  ).value =
+    operator.district || "";
+
+
+  document.getElementById(
+    "address"
+  ).value =
+    operator.address || "";
+
+
+  document.getElementById(
+    "specialization"
+  ).value =
+    operator.specialization || "";
+
+
+  document.getElementById(
+    "operatorStatus"
+  ).value =
+    operator.status || "ACTIVE";
+
+
+  document.getElementById(
+    "operatorModal"
+  ).style.display =
+    "flex";
+
+}
+
+
+/* =========================
+   SAVE
+   ========================= */
+
+async function saveOperator(){
+
+  const full_name =
+    document.getElementById(
+      "fullName"
+    ).value.trim();
+
+
+  const mobile =
+    document.getElementById(
+      "mobile"
+    ).value.trim();
+
+
+  const email =
+    document.getElementById(
+      "email"
+    ).value.trim();
+
+
+  const district =
+    document.getElementById(
+      "district"
+    ).value.trim();
+
+
+  const address =
+    document.getElementById(
+      "address"
+    ).value.trim();
+
+
+  const specialization =
+    document.getElementById(
+      "specialization"
+    ).value;
+
+
+  const status =
+    document.getElementById(
+      "operatorStatus"
+    ).value;
+
+
+  if(!full_name || !mobile){
+
+    alert(
+      "Full Name and Mobile are required."
+    );
+
+    return;
+  }
+
+
+  try{
+
+    const ok =
+      await checkAdmin();
+
+    if(!ok) return;
+
+
+    const payload = {
+
+      full_name,
+      mobile,
+      email,
+      district,
+      address,
+      specialization,
+      status,
+      updated_at:
+        new Date().toISOString()
+
+    };
+
+
+    let result;
+
+
+    if(editingId){
+
+      result =
+        await db
+          .from("operators")
+          .update(payload)
+          .eq(
+            "id",
+            editingId
+          );
+
+    }else{
+
+      result =
+        await db
+          .from("operators")
+          .insert(payload);
+
+    }
+
+
+    if(result.error){
+
+      throw result.error;
+    }
+
+
+    alert(
+      editingId
+        ? "Operator updated successfully."
+        : "Operator created successfully."
+    );
+
+
+    closeModal();
+
+    await loadOperators();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Operation failed:\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   CLEAR
+   ========================= */
+
+function clearForm(){
+
+  document.getElementById(
+    "fullName"
+  ).value = "";
+
+  document.getElementById(
+    "mobile"
+  ).value = "";
+
+  document.getElementById(
+    "email"
+  ).value = "";
+
+  document.getElementById(
+    "district"
+  ).value = "";
+
+  document.getElementById(
+    "address"
+  ).value = "";
+
+  document.getElementById(
+    "specialization"
+  ).value = "";
+
+  document.getElementById(
+    "operatorStatus"
+  ).value = "ACTIVE";
+
+}
+
+
+/* =========================
+   CLOSE
+   ========================= */
+
+function closeModal(){
+
+  document.getElementById(
+    "operatorModal"
+  ).style.display =
+    "none";
+
+}
+
+
+/* =========================
+   LOGOUT
+   ========================= */
+
+async function logout(){
+
+  await db.auth.signOut();
+
+  window.location.href =
+    "admin.html";
+
+}
+
+
+/* =========================
+   SECURITY
+   ========================= */
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /[&<>"']/g,
+    function(char){
+
+      return {
+
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+
+      }[char];
+
+    }
+  );
+
+}
+
+
+/* =========================
+   START
+   ========================= */
+
+checkAdmin().then(
+  ok => {
+
+    if(ok){
+
+      loadOperators();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
