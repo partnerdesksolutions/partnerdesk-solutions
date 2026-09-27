@@ -968,9 +968,10 @@ async function(){
 
 
   const {
-    error
-  } =
-    await db.auth.signInWithPassword({
+  data,
+  error
+} =
+  await db.auth.signInWithPassword({
 
       email:
         $("email").value,
@@ -991,7 +992,15 @@ async function(){
 
   }
 
+if(data.session){
 
+  localStorage.setItem(
+    "admin_access_token",
+    data.session.access_token
+  );
+
+}
+  
   $("loginBox")
     .style.display =
     "none";
