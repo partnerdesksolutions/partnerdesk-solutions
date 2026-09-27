@@ -502,7 +502,62 @@ async function(){
     Number(
       data.total_amount || 0
     ).toFixed(2);
+const {
+  data: historyData
+} = await db
+  .from("order_status_history")
+  .select("status, remarks, changed_at")
+  .eq("order_id", data.id)
+  .order("changed_at", {
+    ascending: true
+  });
 
+const historyBox =
+  document.getElementById("history");
+
+if(!historyData || historyData.length === 0){
+
+  historyBox.innerHTML =
+    "<p style='color:#667085;'>No status history available.</p>";
+
+}else{
+
+  historyBox.innerHTML =
+    "<h3 style='margin-bottom:15px;color:#102a56;'>Order History</h3>" +
+
+    historyData.map(item => `
+      <div style="
+        padding:14px;
+        margin-bottom:10px;
+        background:#f8fafc;
+        border-left:4px solid #10a6a6;
+        border-radius:8px;
+      ">
+
+        <strong>
+          ${item.status.replaceAll("_"," ")}
+        </strong>
+
+        <div style="
+          font-size:12px;
+          color:#667085;
+          margin-top:5px;
+        ">
+          ${new Date(item.changed_at).toLocaleString("en-IN")}
+        </div>
+
+        ${
+          item.remarks
+          ? `<div style="margin-top:7px;">
+              ${item.remarks}
+             </div>`
+          : ""
+        }
+
+      </div>
+    `).join("");
+}
+  
 
   const currentIndex =
     statusOrder.indexOf(
