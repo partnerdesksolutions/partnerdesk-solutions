@@ -280,7 +280,7 @@ body{
 
         <div class="card">
           <small>Total Customers</small>
-          <strong>0</strong>
+<strong id="totalCustomers">0</strong>
         </div>
 
         <div class="card">
@@ -588,10 +588,45 @@ async function loadOrderStats() {
     list.filter(o => o.payment_status !== "PAID").length;
 }
 
+  async function loadCustomerCount() {
+
+  const {
+    data: { user },
+    error: userError
+  } = await db.auth.getUser();
+
+  if (userError || !user) return;
+
+  const { data: profile, error: profileError } = await db
+    .from("partner_profiles")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (profileError || !profile) return;
+
+  const { data: orders, error } = await db
+    .from("orders")
+    .select("customer_mobile")
+    .eq("partner_profile_id", profile.id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const uniqueCustomers = new Set(
+    (orders || []).map(order => order.customer_mobile)
+  );
+
+  document.getElementById("totalCustomers").textContent =
+    uniqueCustomers.size;
+}
   
 loadDashboard();
 loadFinance();
 loadOrderStats();
+loadCustomerCount();
 
 </script>
 
