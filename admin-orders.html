@@ -766,8 +766,12 @@ async function saveOrder(){
 
   if(!selectedOrder) return;
 
-  const status =
-    document.getElementById("mStatus").value;
+  let status =
+  document.getElementById("mStatus").value;
+
+if(operatorId && status === "NEW"){
+  status = "ASSIGNED";
+}
 
   const operatorId =
   document.getElementById("mOperator").value || null;
