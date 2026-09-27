@@ -749,6 +749,9 @@ function viewOrder(id){
   document.getElementById("mPaymentStatus").value =
     selectedOrder.payment_status;
 
+  document.getElementById("mOperator").value =
+  selectedOrder.operator_id || "";
+
   document.getElementById("mNotes").value =
     selectedOrder.notes || "";
 
