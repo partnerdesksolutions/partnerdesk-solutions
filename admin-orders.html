@@ -769,6 +769,9 @@ async function saveOrder(){
   const status =
     document.getElementById("mStatus").value;
 
+  const operatorId =
+  document.getElementById("mOperator").value || null;
+
   const paymentStatus =
     document.getElementById("mPaymentStatus").value;
 
@@ -793,11 +796,12 @@ async function saveOrder(){
           "Prefer":"return=representation"
         },
         body:JSON.stringify({
-          order_status:status,
-          payment_status:paymentStatus,
-          notes:notes,
-          updated_at:new Date().toISOString()
-        })
+  operator_id: operatorId,
+  order_status: status,
+  payment_status: paymentStatus,
+  notes: notes,
+  updated_at: new Date().toISOString()
+})
       }
     );
 
