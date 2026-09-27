@@ -285,7 +285,7 @@ body{
 
         <div class="card">
           <small>Total Orders</small>
-          <strong>0</strong>
+<strong id="totalOrders">0</strong>
         </div>
 
         <div class="card">
@@ -618,6 +618,9 @@ async function loadOrderStats() {
   const uniqueCustomers = new Set(
     (orders || []).map(order => order.customer_mobile)
   );
+
+    document.getElementById("totalOrders").textContent =
+  (orders || []).length;
 
   document.getElementById("totalCustomers").textContent =
     uniqueCustomers.size;
