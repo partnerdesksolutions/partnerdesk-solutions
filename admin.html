@@ -346,7 +346,9 @@ th{
           <tr>
 
             <th>Application ID</th>
-
+            
+            <th>Partner ID</th>
+            
             <th>Name</th>
 
             <th>Business</th>
@@ -550,7 +552,7 @@ function renderApplications(){
     $("rows").innerHTML =
       `
       <tr>
-        <td colspan="6">
+        <colspan="7">
           No applications found.
         </td>
       </tr>
@@ -571,6 +573,10 @@ function renderApplications(){
         <td>
           ${escapeHTML(app.application_id)}
         </td>
+
+<td>
+  ${escapeHTML(app.partner_id || "—")}
+</td>
 
         <td>
           ${escapeHTML(app.full_name)}
