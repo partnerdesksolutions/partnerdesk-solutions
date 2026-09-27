@@ -242,27 +242,27 @@ body{
 
         <div class="card">
           <small>New Orders</small>
-          <strong>0</strong>
+<strong id="newOrders">0</strong>
         </div>
 
         <div class="card">
           <small>Processing</small>
-          <strong>0</strong>
+<strong id="processing">0</strong>
         </div>
 
         <div class="card">
           <small>Pending</small>
-          <strong>0</strong>
+<strong id="pending">0</strong>
         </div>
 
         <div class="card">
           <small>Completed</small>
-          <strong>0</strong>
+<strong id="completed">0</strong>
         </div>
 
         <div class="card">
           <small>Payment Due</small>
-          <strong>₹0</strong>
+<strong id="paymentDue">0</strong>
         </div>
 
       </div>
@@ -534,9 +534,64 @@ async function(){
 
 };
 
+async function loadOrderStats() {
 
+  const {
+    data: { user },
+    error: userError
+  } = await db.auth.getUser();
+
+  if (userError || !user) return;
+
+  const { data: profile, error: profileError } = await db
+    .from("partner_profiles")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (profileError || !profile) return;
+
+  const { data: orders, error } = await db
+    .from("orders")
+    .select("order_status, payment_status")
+    .eq("partner_profile_id", profile.id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const list = orders || [];
+
+  document.getElementById("newOrders").textContent =
+    list.filter(o => o.order_status === "NEW").length;
+
+  document.getElementById("processing").textContent =
+    list.filter(o =>
+      ["ASSIGNED", "PROCESSING", "DOCUMENT_REQUIRED", "VERIFICATION"]
+        .includes(o.order_status)
+    ).length;
+
+  document.getElementById("pending").textContent =
+    list.filter(o =>
+      ["DOCUMENT_REQUIRED", "VERIFICATION"]
+        .includes(o.order_status)
+    ).length;
+
+  document.getElementById("completed").textContent =
+    list.filter(o =>
+      ["COMPLETED", "DELIVERED"]
+        .includes(o.order_status)
+    ).length;
+
+  document.getElementById("paymentDue").textContent =
+    list.filter(o => o.payment_status !== "PAID").length;
+}
+
+  
 loadDashboard();
 loadFinance();
+loadOrderStats();
 
 </script>
 
