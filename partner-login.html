@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Partner Login | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fc;
+  color:#172033;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.login-card{
+  width:100%;
+  max-width:430px;
+  background:#fff;
+  padding:34px;
+  border-radius:16px;
+  box-shadow:0 12px 40px rgba(16,42,86,.10);
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+  color:#102a56;
+  margin-bottom:8px;
+}
+
+.logo span{
+  color:#10a6a6;
+}
+
+.subtitle{
+  color:#667085;
+  margin-bottom:26px;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:15px 0 7px;
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d5dce5;
+  border-radius:9px;
+  font:inherit;
+}
+
+button{
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:9px;
+  background:#102a56;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:20px;
+}
+
+.error{
+  color:#b42318;
+  margin-top:13px;
+  font-size:14px;
+}
+
+.info{
+  margin-top:18px;
+  padding:12px;
+  background:#f3f7fb;
+  border-radius:9px;
+  color:#475467;
+  font-size:13px;
+  line-height:1.5;
+}
+
+a{
+  color:#102a56;
+  font-weight:700;
+  text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+
+  <div class="logo">
+    PartnerDesk <span>Solutions</span>
+  </div>
+
+  <div class="subtitle">
+    Partner Portal Login
+  </div>
+
+  <label>Email</label>
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Registered email"
+  >
+
+  <label>Password</label>
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Password"
+  >
+
+  <button id="loginBtn">
+    LOGIN TO PARTNER PORTAL
+  </button>
+
+  <div id="error" class="error"></div>
+
+  <div class="info">
+
+    Approved partners can access their business dashboard
+    using their registered email and password.
+
+    <br><br>
+
+    New partner?
+    <a href="partner-registration.html">
+      Apply Now
+    </a>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+document.getElementById("loginBtn")
+.onclick =
+async function(){
+
+  const errorBox =
+    document.getElementById("error");
+
+  errorBox.textContent = "";
+
+
+  const email =
+    document.getElementById("email")
+    .value
+    .trim();
+
+
+  const password =
+    document.getElementById("password")
+    .value;
+
+
+  if(!email || !password){
+
+    errorBox.textContent =
+      "Email আৰু Password দুয়োটা দিয়ক।";
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.signInWithPassword({
+
+      email:email,
+
+      password:password
+
+    });
+
+
+  if(error){
+
+    errorBox.textContent =
+      error.message;
+
+    return;
+
+  }
+
+
+  if(data.user){
+
+    window.location.href =
+      "partner-dashboard.html";
+
+  }
+
+};
+
+</script>
+
+</body>
+</html>
