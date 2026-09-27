@@ -847,6 +847,24 @@ function logout(){
 
 /* HELPERS */
 
+  function populateOperators(){
+
+  const select = document.getElementById("mOperator");
+
+  if(!select) return;
+
+  select.innerHTML =
+    '<option value="">Unassigned</option>' +
+    operators
+      .filter(op => op.status === "ACTIVE")
+      .map(op =>
+        '<option value="' + op.id + '">' +
+        op.operator_id + ' — ' + op.full_name +
+        '</option>'
+      )
+      .join("");
+}
+
 function formatStatus(status){
 
   if(!status) return "-";
