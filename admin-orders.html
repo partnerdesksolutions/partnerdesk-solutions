@@ -346,6 +346,7 @@ textarea{
           <th>Amount</th>
           <th>Payment</th>
           <th>Status</th>
+          <th>Operator</th>
           <th>Date</th>
           <th>Action</th>
         </tr>
@@ -421,7 +422,11 @@ textarea{
 
     </div>
 
-    <label><strong>Order Status</strong></label>
+    <label><strong>Assign Operator</strong></label>
+
+<select id="mOperator" style="width:100%;margin:8px 0 15px;">
+  <option value="">Unassigned</option>
+</select>
 
     <select id="mStatus" style="width:100%;margin:8px 0 15px;">
       <option value="NEW">NEW</option>
