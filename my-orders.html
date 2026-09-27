@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Orders | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fc;
+  color:#172033;
+}
+
+.header{
+  background:#102a56;
+  color:#fff;
+  padding:18px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10a6a6;
+}
+
+.back{
+  background:#fff;
+  color:#102a56;
+  padding:9px 15px;
+  border-radius:7px;
+  text-decoration:none;
+  font-weight:700;
+}
+
+.container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+h1{
+  color:#102a56;
+  margin-bottom:7px;
+}
+
+.subtitle{
+  color:#667085;
+  margin-bottom:22px;
+}
+
+.panel{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+
+input,select{
+  padding:11px;
+  border:1px solid #d5dce5;
+  border-radius:8px;
+  font:inherit;
+}
+
+input{
+  flex:1;
+  min-width:240px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+th,td{
+  padding:13px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+}
+
+th{
+  background:#f8fafc;
+  color:#344054;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  background:#eef3f9;
+  color:#102a56;
+}
+
+.amount{
+  font-weight:700;
+}
+
+.view-btn{
+  border:0;
+  background:#102a56;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.detail{
+  display:none;
+  margin-top:20px;
+  padding:20px;
+  background:#f8fafc;
+  border-radius:10px;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin-top:15px;
+}
+
+.item b{
+  display:block;
+  color:#667085;
+  font-size:12px;
+  margin-bottom:4px;
+}
+
+.loading{
+  padding:30px;
+  text-align:center;
+}
+
+.error{
+  color:#b42318;
+  padding:20px;
+}
+
+@media(max-width:700px){
+  .detail-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+  <div class="logo">
+    PartnerDesk <span>Solutions</span>
+  </div>
+
+  <a
+    href="partner-dashboard.html"
+    class="back"
+  >
+    DASHBOARD
+  </a>
+
+</div>
+
+
+<div class="container">
+
+  <h1>My Orders</h1>
+
+  <p class="subtitle">
+    View and track your submitted service orders.
+  </p>
+
+
+  <div class="panel">
+
+    <div class="toolbar">
+
+      <input
+        id="search"
+        placeholder="Search Order ID, customer, mobile..."
+      >
+
+      <select id="statusFilter">
+
+        <option value="">All Status</option>
+        <option>NEW</option>
+        <option>ASSIGNED</option>
+        <option>PROCESSING</option>
+        <option>DOCUMENT_REQUIRED</option>
+        <option>VERIFICATION</option>
+        <option>COMPLETED</option>
+        <option>DELIVERED</option>
+        <option>REJECTED</option>
+
+      </select>
+
+    </div>
+
+
+    <div
+      id="loading"
+      class="loading"
+    >
+      Loading orders...
+    </div>
+
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Amount</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="rows"></tbody>
+
+      </table>
+
+    </div>
+
+
+    <div
+      id="detail"
+      class="detail"
+    ></div>
+
+
+    <div
+      id="error"
+      class="error"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+let orders = [];
+
+
+const $ =
+id => document.getElementById(id);
+
+
+function escapeHTML(value){
+
+  return String(value || "")
+    .replace(/[&<>"']/g,function(char){
+
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[char];
+
+    });
+
+}
+
+
+async function loadOrders(){
+
+  const {
+    data:{
+      user
+    }
+  } =
+    await db.auth.getUser();
+
+
+  if(!user){
+
+    window.location.href =
+      "partner-login.html";
+
+    return;
+
+  }
+
+
+  const {
+    data:profile,
+    error:profileError
+  } =
+    await db
+      .from("partner_profiles")
+      .select("id")
+      .eq(
+        "auth_user_id",
+        user.id
+      )
+      .eq(
+        "status",
+        "ACTIVE"
+      )
+      .single();
+
+
+  if(profileError){
+
+    $("loading").style.display="none";
+
+    $("error").textContent =
+      "Partner profile load failed: " +
+      profileError.message;
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("orders")
+      .select("*")
+      .eq(
+        "partner_profile_id",
+        profile.id
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  $("loading").style.display="none";
+
+
+  if(error){
+
+    $("error").textContent =
+      "Orders load failed: " +
+      error.message;
+
+    return;
+
+  }
+
+
+  orders = data || [];
+
+  renderOrders();
+
+}
+
+
+function renderOrders(){
+
+  const search =
+    $("search")
+      .value
+      .toLowerCase();
+
+
+  const filter =
+    $("statusFilter")
+      .value;
+
+
+  const list =
+    orders.filter(function(order){
+
+      const text =
+        [
+          order.order_id,
+          order.customer_name,
+          order.customer_mobile,
+          order.service_name
+        ]
+        .join(" ")
+        .toLowerCase();
+
+
+      return (
+        (!search || text.includes(search))
+        &&
+        (!filter || order.order_status === filter)
+      );
+
+    });
+
+
+  if(!list.length){
+
+    $("rows").innerHTML = `
+      <tr>
+        <td colspan="7">
+          No orders found.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  $("rows").innerHTML =
+    list.map(function(order){
+
+      return `
+
+      <tr>
+
+        <td>
+          ${escapeHTML(order.order_id)}
+        </td>
+
+        <td>
+          ${escapeHTML(order.customer_name)}
+        </td>
+
+        <td>
+          ${escapeHTML(order.service_name)}
+        </td>
+
+        <td class="amount">
+          ₹${Number(
+            order.total_amount || 0
+          ).toFixed(2)}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            order.payment_status
+          )}
+        </td>
+
+        <td>
+          <span class="badge">
+            ${escapeHTML(
+              order.order_status
+            )}
+          </span>
+        </td>
+
+        <td>
+
+          <button
+            class="view-btn"
+            onclick="viewOrder('${order.id}')"
+          >
+            VIEW
+          </button>
+
+        </td>
+
+      </tr>
+
+      `;
+
+    }).join("");
+
+}
+
+
+window.viewOrder =
+function(id){
+
+  const order =
+    orders.find(
+      item => item.id === id
+    );
+
+
+  if(!order) return;
+
+
+  $("detail").style.display =
+    "block";
+
+
+  $("detail").innerHTML = `
+
+    <h2>
+      Order Details
+    </h2>
+
+
+    <div class="detail-grid">
+
+      <div class="item">
+        <b>Order ID</b>
+        ${escapeHTML(order.order_id)}
+      </div>
+
+      <div class="item">
+        <b>Order Status</b>
+        ${escapeHTML(order.order_status)}
+      </div>
+
+      <div class="item">
+        <b>Customer Name</b>
+        ${escapeHTML(order.customer_name)}
+      </div>
+
+      <div class="item">
+        <b>Customer Mobile</b>
+        ${escapeHTML(order.customer_mobile)}
+      </div>
+
+      <div class="item">
+        <b>Customer Address</b>
+        ${escapeHTML(order.customer_address)}
+      </div>
+
+      <div class="item">
+        <b>Service Category</b>
+        ${escapeHTML(order.service_category)}
+      </div>
+
+      <div class="item">
+        <b>Service</b>
+        ${escapeHTML(order.service_name)}
+      </div>
+
+      <div class="item">
+        <b>Government Fee</b>
+        ₹${Number(
+          order.government_fee || 0
+        ).toFixed(2)}
+      </div>
+
+      <div class="item">
+        <b>Processing Fee</b>
+        ₹${Number(
+          order.processing_fee || 0
+        ).toFixed(2)}
+      </div>
+
+      <div class="item">
+        <b>Total Amount</b>
+        ₹${Number(
+          order.total_amount || 0
+        ).toFixed(2)}
+      </div>
+
+      <div class="item">
+        <b>Payment Status</b>
+        ${escapeHTML(order.payment_status)}
+      </div>
+
+      <div class="item">
+        <b>Document Notes</b>
+        ${escapeHTML(order.document_notes)}
+      </div>
+
+      <div class="item">
+        <b>Additional Notes</b>
+        ${escapeHTML(order.notes)}
+      </div>
+
+    </div>
+
+  `;
+
+
+  $("detail").scrollIntoView({
+    behavior:"smooth"
+  });
+
+};
+
+
+$("search").oninput =
+renderOrders;
+
+$("statusFilter").onchange =
+renderOrders;
+
+
+loadOrders();
+
+</script>
+
+</body>
+</html>
