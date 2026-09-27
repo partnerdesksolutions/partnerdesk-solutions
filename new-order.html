@@ -422,6 +422,30 @@ async function loadServices(){
   }
 );
 
+  document.getElementById(
+  "serviceName"
+).addEventListener(
+  "change",
+  function(){
+
+    const option =
+      this.options[this.selectedIndex];
+
+    if(!option) return;
+
+    document.getElementById(
+      "governmentFee"
+    ).value =
+      option.dataset.govFee || 0;
+
+    document.getElementById(
+      "processingFee"
+    ).value =
+      option.dataset.processingFee || 0;
+
+  }
+);
+
   const {
     data,
     error
@@ -660,7 +684,7 @@ document.getElementById(
 
 
 loadPartner();
-
+loadServices();
 </script>
 
 </body>
