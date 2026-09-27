@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Operator Dashboard | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  color:#172033;
+}
+
+header{
+  background:#0b1f3a;
+  color:white;
+  padding:18px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:700;
+}
+
+.logo span{
+  color:#10a6a6;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.operator-id{
+  font-size:13px;
+  opacity:.9;
+}
+
+.logout{
+  background:white;
+  color:#0b1f3a;
+  border:0;
+  padding:9px 15px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.container{
+  max-width:1400px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+.welcome{
+  margin-bottom:25px;
+}
+
+.welcome h1{
+  color:#0b1f3a;
+  margin-bottom:6px;
+}
+
+.welcome p{
+  color:#687386;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.card-title{
+  color:#687386;
+  font-size:14px;
+}
+
+.card-value{
+  font-size:28px;
+  font-weight:700;
+  margin-top:8px;
+  color:#0b1f3a;
+}
+
+.panel{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.06);
+}
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.search{
+  flex:1;
+  min-width:240px;
+}
+
+input,select,textarea{
+  padding:11px 13px;
+  border:1px solid #d8dde6;
+  border-radius:7px;
+  font-size:14px;
+}
+
+button{
+  border:0;
+  border-radius:7px;
+  padding:11px 16px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.refresh{
+  background:#0b1f3a;
+  color:white;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
+}
+
+th,td{
+  padding:14px;
+  text-align:left;
+  border-bottom:1px solid #edf0f4;
+  font-size:14px;
+}
+
+th{
+  background:#f8fafc;
+  font-size:13px;
+}
+
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.NEW{
+  background:#e8f1ff;
+  color:#1769aa;
+}
+
+.ASSIGNED{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.PROCESSING{
+  background:#e8eaff;
+  color:#4338ca;
+}
+
+.DOCUMENT_REQUIRED{
+  background:#fff0e6;
+  color:#c2410c;
+}
+
+.VERIFICATION{
+  background:#e0f2fe;
+  color:#0369a1;
+}
+
+.COMPLETED{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+.DELIVERED{
+  background:#d1fae5;
+  color:#047857;
+}
+
+.REJECTED{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+.view-btn{
+  background:#0b1f3a;
+  color:white;
+  padding:7px 12px;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:650px;
+  max-height:90vh;
+  overflow:auto;
+  border-radius:14px;
+  padding:25px;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+
+.close{
+  background:#eee;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.detail{
+  background:#f8fafc;
+  padding:12px;
+  border-radius:8px;
+}
+
+.detail small{
+  display:block;
+  color:#687386;
+  margin-bottom:5px;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.full-select{
+  width:100%;
+  margin-bottom:15px;
+}
+
+textarea{
+  width:100%;
+  min-height:90px;
+  resize:vertical;
+}
+
+.save{
+  background:#0b1f3a;
+  color:white;
+  width:100%;
+  margin-top:15px;
+}
+
+.message{
+  padding:20px;
+  text-align:center;
+  color:#687386;
+}
+
+@media(max-width:1000px){
+
+  .stats{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:700px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .detail-grid{
+    grid-template-columns:1fr;
+  }
+
+  .header-right{
+    gap:8px;
+  }
+
+  .operator-id{
+    display:none;
+  }
+
+}
+
+@media(max-width:500px){
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:0 12px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">
+    Partner<span>Desk</span> Solutions
+  </div>
+
+  <div class="header-right">
+
+    <div
+      class="operator-id"
+      id="headerOperatorId"
+    >
+      Operator
+    </div>
+
+    <button
+      class="logout"
+      onclick="logout()"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</header>
+
+
+<div class="container">
+
+  <div class="welcome">
+
+    <h1>
+      Welcome,
+      <span id="operatorName">
+        Operator
+      </span>
+    </h1>
+
+    <p>
+      Manage your assigned service orders.
+    </p>
+
+  </div>
+
+
+  <!-- STATS -->
+
+  <div class="stats">
+
+    <div class="card">
+
+      <div class="card-title">
+        Assigned
+      </div>
+
+      <div
+        class="card-value"
+        id="assignedCount"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        Processing
+      </div>
+
+      <div
+        class="card-value"
+        id="processingCount"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        Verification
+      </div>
+
+      <div
+        class="card-value"
+        id="verificationCount"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        Completed
+      </div>
+
+      <div
+        class="card-value"
+        id="completedCount"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        Total Orders
+      </div>
+
+      <div
+        class="card-value"
+        id="totalCount"
+      >
+        0
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ORDERS -->
+
+  <div class="panel">
+
+    <div class="toolbar">
+
+      <input
+        id="searchInput"
+        class="search"
+        placeholder="Search Order ID, Customer, Mobile..."
+        oninput="renderOrders()"
+      >
+
+
+      <select
+        id="statusFilter"
+        onchange="renderOrders()"
+      >
+
+        <option value="">
+          All Status
+        </option>
+
+        <option value="ASSIGNED">
+          ASSIGNED
+        </option>
+
+        <option value="PROCESSING">
+          PROCESSING
+        </option>
+
+        <option value="DOCUMENT_REQUIRED">
+          DOCUMENT REQUIRED
+        </option>
+
+        <option value="VERIFICATION">
+          VERIFICATION
+        </option>
+
+        <option value="COMPLETED">
+          COMPLETED
+        </option>
+
+        <option value="REJECTED">
+          REJECTED
+        </option>
+
+      </select>
+
+
+      <button
+        class="refresh"
+        onclick="loadOrders()"
+      >
+        REFRESH
+      </button>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Order ID
+            </th>
+
+            <th>
+              Customer
+            </th>
+
+            <th>
+              Mobile
+            </th>
+
+            <th>
+              Service
+            </th>
+
+            <th>
+              Payment
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Date
+            </th>
+
+            <th>
+              Action
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody
+          id="ordersTable"
+        >
+
+          <tr>
+
+            <td
+              colspan="8"
+              class="message"
+            >
+              Loading orders...
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ORDER MODAL -->
+
+<div
+  class="modal"
+  id="orderModal"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2>
+        Order Details
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <div class="detail-grid">
+
+      <div class="detail">
+
+        <small>
+          Order ID
+        </small>
+
+        <strong
+          id="mOrderId"
+        ></strong>
+
+      </div>
+
+
+      <div class="detail">
+
+        <small>
+          Customer
+        </small>
+
+        <strong
+          id="mCustomer"
+        ></strong>
+
+      </div>
+
+
+      <div class="detail">
+
+        <small>
+          Mobile
+        </small>
+
+        <strong
+          id="mMobile"
+        ></strong>
+
+      </div>
+
+
+      <div class="detail">
+
+        <small>
+          Service
+        </small>
+
+        <strong
+          id="mService"
+        ></strong>
+
+      </div>
+
+
+      <div class="detail">
+
+        <small>
+          Customer Address
+        </small>
+
+        <strong
+          id="mAddress"
+        ></strong>
+
+      </div>
+
+
+      <div class="detail">
+
+        <small>
+          Payment
+        </small>
+
+        <strong
+          id="mPayment"
+        ></strong>
+
+      </div>
+
+
+      <div class="detail">
+
+        <small>
+          Total Amount
+        </small>
+
+        ₹<strong
+          id="mTotal"
+        ></strong>
+
+      </div>
+
+
+      <div class="detail">
+
+        <small>
+          Current Status
+        </small>
+
+        <strong
+          id="mCurrentStatus"
+        ></strong>
+
+      </div>
+
+    </div>
+
+
+    <label>
+      Update Order Status
+    </label>
+
+
+    <select
+      id="mStatus"
+      class="full-select"
+    >
+
+      <option value="ASSIGNED">
+        ASSIGNED
+      </option>
+
+      <option value="PROCESSING">
+        PROCESSING
+      </option>
+
+      <option value="DOCUMENT_REQUIRED">
+        DOCUMENT REQUIRED
+      </option>
+
+      <option value="VERIFICATION">
+        VERIFICATION
+      </option>
+
+      <option value="COMPLETED">
+        COMPLETED
+      </option>
+
+      <option value="REJECTED">
+        REJECTED
+      </option>
+
+    </select>
+
+
+    <label>
+      Operator Remark
+    </label>
+
+
+    <textarea
+      id="mNotes"
+      placeholder="Enter work/update remark..."
+    ></textarea>
+
+
+    <button
+      class="save"
+      onclick="saveOrder()"
+    >
+      UPDATE ORDER
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   SUPABASE
+   ========================= */
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+let operator = null;
+let orders = [];
+let selectedOrder = null;
+
+
+/* =========================
+   AUTH + OPERATOR
+   ========================= */
+
+async function loadOperator(){
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.getSession();
+
+
+  if(
+    error ||
+    !data.session
+  ){
+
+    window.location.href =
+      "operator-login.html";
+
+    return false;
+  }
+
+
+  const user =
+    data.session.user;
+
+
+  const {
+    data: operatorData,
+    error: operatorError
+  } =
+    await db
+      .from("operators")
+      .select("*")
+      .eq(
+        "auth_user_id",
+        user.id
+      )
+      .maybeSingle();
+
+
+  if(
+    operatorError ||
+    !operatorData
+  ){
+
+    await db.auth.signOut();
+
+    window.location.href =
+      "operator-login.html";
+
+    return false;
+  }
+
+
+  if(
+    operatorData.status !==
+    "ACTIVE"
+  ){
+
+    await db.auth.signOut();
+
+    alert(
+      "Your operator account is not active."
+    );
+
+    window.location.href =
+      "operator-login.html";
+
+    return false;
+  }
+
+
+  operator =
+    operatorData;
+
+
+  document.getElementById(
+    "operatorName"
+  ).textContent =
+    operator.full_name;
+
+
+  document.getElementById(
+    "headerOperatorId"
+  ).textContent =
+    operator.operator_id;
+
+
+  return true;
+}
+
+
+/* =========================
+   LOAD ASSIGNED ORDERS
+   ========================= */
+
+async function loadOrders(){
+
+  try{
+
+    const ok =
+      await loadOperator();
+
+    if(!ok) return;
+
+
+    const {
+      data,
+      error
+    } =
+      await db
+        .from("orders")
+        .select("*")
+        .eq(
+          "operator_id",
+          operator.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(error){
+
+      throw error;
+    }
+
+
+    orders =
+      data || [];
+
+
+    updateStats();
+
+    renderOrders();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    document.getElementById(
+      "ordersTable"
+    ).innerHTML =
+
+      `<tr>
+
+        <td
+          colspan="8"
+          class="message"
+        >
+          Failed to load orders
+        </td>
+
+      </tr>`;
+
+  }
+
+}
+
+
+/* =========================
+   STATS
+   ========================= */
+
+function updateStats(){
+
+  document.getElementById(
+    "assignedCount"
+  ).textContent =
+
+    orders.filter(
+      o =>
+        o.order_status ===
+        "ASSIGNED"
+    ).length;
+
+
+  document.getElementById(
+    "processingCount"
+  ).textContent =
+
+    orders.filter(
+      o =>
+        o.order_status ===
+        "PROCESSING"
+    ).length;
+
+
+  document.getElementById(
+    "verificationCount"
+  ).textContent =
+
+    orders.filter(
+      o =>
+        o.order_status ===
+        "VERIFICATION"
+    ).length;
+
+
+  document.getElementById(
+    "completedCount"
+  ).textContent =
+
+    orders.filter(
+      o =>
+        o.order_status ===
+        "COMPLETED"
+    ).length;
+
+
+  document.getElementById(
+    "totalCount"
+  ).textContent =
+    orders.length;
+
+}
+
+
+/* =========================
+   RENDER ORDERS
+   ========================= */
+
+function renderOrders(){
+
+  const search =
+    document.getElementById(
+      "searchInput"
+    )
+    .value
+    .toLowerCase();
+
+
+  const status =
+    document.getElementById(
+      "statusFilter"
+    ).value;
+
+
+  const filtered =
+    orders.filter(
+      order => {
+
+        const text =
+          [
+
+            order.order_id,
+
+            order.customer_name,
+
+            order.customer_mobile,
+
+            order.service_name
+
+          ]
+          .join(" ")
+          .toLowerCase();
+
+
+        return (
+
+          (!search ||
+            text.includes(search))
+
+          &&
+
+          (!status ||
+            order.order_status ===
+            status)
+
+        );
+
+      }
+    );
+
+
+  const table =
+    document.getElementById(
+      "ordersTable"
+    );
+
+
+  if(!filtered.length){
+
+    table.innerHTML =
+
+      `<tr>
+
+        <td
+          colspan="8"
+          class="message"
+        >
+          No assigned orders found.
+        </td>
+
+      </tr>`;
+
+    return;
+  }
+
+
+  table.innerHTML =
+    filtered.map(
+      order => `
+
+      <tr>
+
+        <td>
+          <strong>
+            ${escapeHTML(
+              order.order_id
+            )}
+          </strong>
+        </td>
+
+
+        <td>
+          ${escapeHTML(
+            order.customer_name ||
+            "-"
+          )}
+        </td>
+
+
+        <td>
+          ${escapeHTML(
+            order.customer_mobile ||
+            "-"
+          )}
+        </td>
+
+
+        <td>
+          ${escapeHTML(
+            order.service_name ||
+            "-"
+          )}
+        </td>
+
+
+        <td>
+          ${escapeHTML(
+            order.payment_status ||
+            "-"
+          )}
+        </td>
+
+
+        <td>
+
+          <span
+            class="status
+            ${escapeHTML(
+              order.order_status
+            )}"
+          >
+
+            ${formatStatus(
+              order.order_status
+            )}
+
+          </span>
+
+        </td>
+
+
+        <td>
+          ${formatDate(
+            order.created_at
+          )}
+        </td>
+
+
+        <td>
+
+          <button
+            class="view-btn"
+            onclick="
+              viewOrder(
+                '${order.id}'
+              )
+            "
+          >
+            VIEW
+          </button>
+
+        </td>
+
+      </tr>
+
+      `
+    ).join("");
+
+}
+
+
+/* =========================
+   VIEW ORDER
+   ========================= */
+
+function viewOrder(id){
+
+  selectedOrder =
+    orders.find(
+      o => o.id === id
+    );
+
+
+  if(!selectedOrder)
+    return;
+
+
+  document.getElementById(
+    "mOrderId"
+  ).textContent =
+    selectedOrder.order_id;
+
+
+  document.getElementById(
+    "mCustomer"
+  ).textContent =
+    selectedOrder.customer_name ||
+    "-";
+
+
+  document.getElementById(
+    "mMobile"
+  ).textContent =
+    selectedOrder.customer_mobile ||
+    "-";
+
+
+  document.getElementById(
+    "mService"
+  ).textContent =
+    selectedOrder.service_name ||
+    "-";
+
+
+  document.getElementById(
+    "mAddress"
+  ).textContent =
+    selectedOrder.customer_address ||
+    "-";
+
+
+  document.getElementById(
+    "mPayment"
+  ).textContent =
+    selectedOrder.payment_status ||
+    "-";
+
+
+  document.getElementById(
+    "mTotal"
+  ).textContent =
+    Number(
+      selectedOrder.total_amount ||
+      0
+    ).toFixed(2);
+
+
+  document.getElementById(
+    "mCurrentStatus"
+  ).textContent =
+    formatStatus(
+      selectedOrder.order_status
+    );
+
+
+  document.getElementById(
+    "mStatus"
+  ).value =
+    selectedOrder.order_status;
+
+
+  document.getElementById(
+    "mNotes"
+  ).value =
+    selectedOrder.notes ||
+    "";
+
+
+  document.getElementById(
+    "orderModal"
+  ).style.display =
+    "flex";
+
+}
+
+
+/* =========================
+   SAVE ORDER
+   ========================= */
+
+async function saveOrder(){
+
+  if(!selectedOrder)
+    return;
+
+
+  const status =
+    document.getElementById(
+      "mStatus"
+    ).value;
+
+
+  const notes =
+    document.getElementById(
+      "mNotes"
+    ).value;
+
+
+  try{
+
+    const {
+      data: sessionData
+    } =
+      await db.auth.getSession();
+
+
+    if(
+      !sessionData.session
+    ){
+
+      window.location.href =
+        "operator-login.html";
+
+      return;
+    }
+
+
+    const {
+      error
+    } =
+      await db
+        .from("orders")
+        .update({
+
+          order_status:
+            status,
+
+          notes:
+            notes,
+
+          updated_at:
+            new Date()
+            .toISOString()
+
+        })
+        .eq(
+          "id",
+          selectedOrder.id
+        );
+
+
+    if(error){
+
+      throw error;
+    }
+
+
+    alert(
+      "Order updated successfully."
+    );
+
+
+    closeModal();
+
+    await loadOrders();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Failed to update order:\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================
+   CLOSE MODAL
+   ========================= */
+
+function closeModal(){
+
+  document.getElementById(
+    "orderModal"
+  ).style.display =
+    "none";
+
+  selectedOrder = null;
+
+}
+
+
+/* =========================
+   LOGOUT
+   ========================= */
+
+async function logout(){
+
+  await db.auth.signOut();
+
+  window.location.href =
+    "operator-login.html";
+
+}
+
+
+/* =========================
+   HELPERS
+   ========================= */
+
+function formatStatus(status){
+
+  if(!status)
+    return "-";
+
+
+  return status
+    .replaceAll(
+      "_",
+      " "
+    )
+    .replace(
+      /\b\w/g,
+      c =>
+        c.toUpperCase()
+    );
+
+}
+
+
+function formatDate(date){
+
+  if(!date)
+    return "-";
+
+
+  return new Date(date)
+    .toLocaleDateString(
+      "en-IN"
+    );
+
+}
+
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /[&<>"']/g,
+    function(char){
+
+      return {
+
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+
+      }[char];
+
+    }
+  );
+
+}
+
+
+/* =========================
+   START
+   ========================= */
+
+loadOperator().then(
+  ok => {
+
+    if(ok){
+      loadOrders();
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
