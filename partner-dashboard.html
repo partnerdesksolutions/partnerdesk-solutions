@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Partner Dashboard | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fc;
+  color:#172033;
+}
+
+.header{
+  background:#102a56;
+  color:#fff;
+  padding:18px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10a6a6;
+}
+
+.logout{
+  background:#fff;
+  color:#102a56;
+  border:0;
+  padding:9px 15px;
+  border-radius:7px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.container{
+  max-width:1200px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+.welcome{
+  margin-bottom:25px;
+}
+
+.welcome h1{
+  color:#102a56;
+  margin-bottom:7px;
+}
+
+.partner-id{
+  color:#10a6a6;
+  font-weight:700;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.card small{
+  color:#667085;
+  font-weight:700;
+}
+
+.card strong{
+  display:block;
+  font-size:28px;
+  color:#102a56;
+  margin-top:8px;
+}
+
+.section{
+  background:#fff;
+  padding:22px;
+  border-radius:12px;
+  margin-bottom:22px;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.section h2{
+  color:#102a56;
+  margin-bottom:18px;
+}
+
+.business-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.quick{
+  padding:18px;
+  background:#f3f7fb;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  color:#102a56;
+  text-align:center;
+}
+
+.profile-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.profile-item b{
+  display:block;
+  font-size:12px;
+  color:#667085;
+  margin-bottom:5px;
+}
+
+.loading{
+  text-align:center;
+  padding:40px;
+}
+
+.error{
+  color:#b42318;
+  padding:20px;
+}
+
+@media(max-width:900px){
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .business-grid,
+  .quick-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:600px){
+
+  .cards,
+  .business-grid,
+  .quick-grid,
+  .profile-grid{
+    grid-template-columns:1fr;
+  }
+
+  .header{
+    padding:15px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+  <div class="logo">
+    PartnerDesk <span>Solutions</span>
+  </div>
+
+  <button
+    class="logout"
+    id="logoutBtn"
+  >
+    LOGOUT
+  </button>
+
+</div>
+
+
+<div class="container">
+
+  <div id="loading" class="loading">
+    Loading Partner Dashboard...
+  </div>
+
+
+  <div id="dashboard" style="display:none">
+
+
+    <div class="welcome">
+
+      <h1>
+        Welcome, <span id="partnerName"></span>
+      </h1>
+
+      <p>
+        Partner ID:
+        <span
+          id="partnerId"
+          class="partner-id"
+        ></span>
+      </p>
+
+    </div>
+
+
+    <!-- TODAY -->
+
+    <div class="section">
+
+      <h2>Today's Overview</h2>
+
+      <div class="cards">
+
+        <div class="card">
+          <small>New Orders</small>
+          <strong>0</strong>
+        </div>
+
+        <div class="card">
+          <small>Processing</small>
+          <strong>0</strong>
+        </div>
+
+        <div class="card">
+          <small>Pending</small>
+          <strong>0</strong>
+        </div>
+
+        <div class="card">
+          <small>Completed</small>
+          <strong>0</strong>
+        </div>
+
+        <div class="card">
+          <small>Payment Due</small>
+          <strong>₹0</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- BUSINESS -->
+
+    <div class="section">
+
+      <h2>Business Overview</h2>
+
+      <div class="business-grid">
+
+        <div class="card">
+          <small>Total Customers</small>
+          <strong>0</strong>
+        </div>
+
+        <div class="card">
+          <small>Total Orders</small>
+          <strong>0</strong>
+        </div>
+
+        <div class="card">
+          <small>Revenue</small>
+          <strong>₹0</strong>
+        </div>
+
+        <div class="card">
+          <small>Commission</small>
+          <strong>₹0</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="section">
+
+      <h2>Quick Actions</h2>
+
+      <div class="quick-grid">
+
+        <div class="quick">
+          ➕<br><br>
+          New Order
+        </div>
+
+        <div class="quick">
+          📋<br><br>
+          My Orders
+        </div>
+
+        <div class="quick">
+          🔎<br><br>
+          Track Order
+        </div>
+
+        <div class="quick">
+          📞<br><br>
+          Support
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- PROFILE -->
+
+    <div class="section">
+
+      <h2>Partner Profile</h2>
+
+      <div class="profile-grid">
+
+        <div class="profile-item">
+          <b>Partner ID</b>
+          <span id="profilePartnerId"></span>
+        </div>
+
+        <div class="profile-item">
+          <b>Name</b>
+          <span id="profileName"></span>
+        </div>
+
+        <div class="profile-item">
+          <b>Business Name</b>
+          <span id="profileBusiness"></span>
+        </div>
+
+        <div class="profile-item">
+          <b>Mobile</b>
+          <span id="profileMobile"></span>
+        </div>
+
+        <div class="profile-item">
+          <b>Email</b>
+          <span id="profileEmail"></span>
+        </div>
+
+        <div class="profile-item">
+          <b>Status</b>
+          <span id="profileStatus"></span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="error"
+    class="error"
+    style="display:none"
+  ></div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+async function loadDashboard(){
+
+  const {
+    data:{
+      user
+    },
+    error:sessionError
+  } =
+    await db.auth.getUser();
+
+
+  if(sessionError || !user){
+
+    window.location.href =
+      "partner-login.html";
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("partner_profiles")
+      .select("*")
+      .eq(
+        "auth_user_id",
+        user.id
+      )
+      .single();
+
+
+  if(error){
+
+    document.getElementById(
+      "loading"
+    ).style.display="none";
+
+    document.getElementById(
+      "error"
+    ).style.display="block";
+
+    document.getElementById(
+      "error"
+    ).textContent =
+      "Partner profile load failed: " +
+      error.message;
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    "partnerName"
+  ).textContent =
+    data.full_name || "";
+
+
+  document.getElementById(
+    "partnerId"
+  ).textContent =
+    data.partner_id || "";
+
+
+  document.getElementById(
+    "profilePartnerId"
+  ).textContent =
+    data.partner_id || "—";
+
+
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    data.full_name || "—";
+
+
+  document.getElementById(
+    "profileBusiness"
+  ).textContent =
+    data.business_name || "—";
+
+
+  document.getElementById(
+    "profileMobile"
+  ).textContent =
+    data.mobile || "—";
+
+
+  document.getElementById(
+    "profileEmail"
+  ).textContent =
+    data.email || user.email || "—";
+
+
+  document.getElementById(
+    "profileStatus"
+  ).textContent =
+    data.status || "—";
+
+
+  document.getElementById(
+    "loading"
+  ).style.display="none";
+
+
+  document.getElementById(
+    "dashboard"
+  ).style.display="block";
+
+}
+
+
+document.getElementById(
+  "logoutBtn"
+).onclick =
+async function(){
+
+  await db.auth.signOut();
+
+  window.location.href =
+    "partner-login.html";
+
+};
+
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
