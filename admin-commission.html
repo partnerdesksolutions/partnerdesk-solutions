@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Commission Management | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fc;
+  color:#172033;
+}
+
+.header{
+  background:#102a56;
+  color:#fff;
+  padding:18px 5%;
+  font-size:22px;
+  font-weight:800;
+}
+
+.header span{
+  color:#10a6a6;
+}
+
+.container{
+  max-width:1250px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+.panel{
+  background:#fff;
+  padding:22px;
+  border-radius:14px;
+  box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
+input,select{
+  padding:11px;
+  border:1px solid #d5dce5;
+  border-radius:8px;
+  font:inherit;
+}
+
+.search{
+  flex:1;
+  min-width:240px;
+}
+
+button{
+  padding:11px 16px;
+  border:0;
+  border-radius:8px;
+  background:#102a56;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.add-btn{
+  background:#087f5b;
+}
+
+.edit-btn{
+  background:#eef3f9;
+  color:#102a56;
+}
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:950px;
+}
+
+th,td{
+  padding:13px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+}
+
+th{
+  background:#f8fafc;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  background:#e8f7ef;
+  color:#087f5b;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal-box{
+  background:#fff;
+  width:min(600px,100%);
+  padding:25px;
+  border-radius:14px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:14px 0 6px;
+}
+
+.full{
+  width:100%;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:20px;
+}
+
+.cancel{
+  background:#eaf0f7;
+  color:#102a56;
+}
+
+.error{
+  color:#b42318;
+  margin-top:12px;
+}
+
+.login{
+  max-width:420px;
+  margin:80px auto;
+}
+
+.login button{
+  width:100%;
+  margin-top:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  PartnerDesk <span>Solutions</span> — Commission Management
+</div>
+
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="panel login">
+
+  <h2>Admin Login</h2>
+
+  <p style="margin-top:8px;">
+    Manage service-wise commission rules.
+  </p>
+
+  <label>Email</label>
+
+  <input
+    id="email"
+    class="full"
+    type="email"
+    placeholder="Admin email"
+  >
+
+  <label>Password</label>
+
+  <input
+    id="password"
+    class="full"
+    type="password"
+    placeholder="Password"
+  >
+
+  <button id="loginBtn">
+    LOGIN
+  </button>
+
+  <div id="loginError" class="error"></div>
+
+</div>
+
+
+<!-- APP -->
+
+<div
+  id="app"
+  class="container"
+  style="display:none;"
+>
+
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  ">
+
+    <div>
+
+      <h1>Commission Rules</h1>
+
+      <p style="margin-top:6px;color:#667085;">
+        Service-wise processing fee and payout management.
+      </p>
+
+    </div>
+
+    <button onclick="logout()">
+      LOGOUT
+    </button>
+
+  </div>
+
+
+  <div class="panel" style="margin-top:20px;">
+
+    <div class="toolbar">
+
+      <input
+        id="search"
+        class="search"
+        placeholder="Search service..."
+      >
+
+      <select id="statusFilter">
+
+        <option value="">
+          All Status
+        </option>
+
+        <option value="ACTIVE">
+          ACTIVE
+        </option>
+
+        <option value="INACTIVE">
+          INACTIVE
+        </option>
+
+      </select>
+
+      <button
+        class="add-btn"
+        onclick="openAdd()"
+      >
+        + ADD RULE
+      </button>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Category</th>
+            <th>Service</th>
+            <th>Processing Fee</th>
+            <th>Partner</th>
+            <th>Operator</th>
+            <th>PartnerDesk</th>
+            <th>Status</th>
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="rows"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL -->
+
+<div
+  id="modal"
+  class="modal"
+>
+
+  <div class="modal-box">
+
+    <h2 id="modalTitle">
+      Add Commission Rule
+    </h2>
+
+    <input
+      type="hidden"
+      id="ruleId"
+    >
+
+
+    <label>
+      Service Category
+    </label>
+
+    <input
+      id="category"
+      class="full"
+      placeholder="Government Services"
+    >
+
+
+    <label>
+      Service Name
+    </label>
+
+    <input
+      id="service"
+      class="full"
+      placeholder="PAN Card"
+    >
+
+
+    <label>
+      Processing Fee
+    </label>
+
+    <input
+      id="processing"
+      class="full"
+      type="number"
+      min="0"
+      step="0.01"
+    >
+
+
+    <label>
+      Partner Share
+    </label>
+
+    <input
+      id="partner"
+      class="full"
+      type="number"
+      min="0"
+      step="0.01"
+    >
+
+
+    <label>
+      Operator Cost
+    </label>
+
+    <input
+      id="operator"
+      class="full"
+      type="number"
+      min="0"
+      step="0.01"
+    >
+
+
+    <label>
+      PartnerDesk Share
+    </label>
+
+    <input
+      id="desk"
+      class="full"
+      type="number"
+      min="0"
+      step="0.01"
+    >
+
+
+    <label>
+      Status
+    </label>
+
+    <select
+      id="status"
+      class="full"
+    >
+
+      <option value="ACTIVE">
+        ACTIVE
+      </option>
+
+      <option value="INACTIVE">
+        INACTIVE
+      </option>
+
+    </select>
+
+
+    <div class="actions">
+
+      <button
+        class="cancel"
+        onclick="closeModal()"
+      >
+        CANCEL
+      </button>
+
+      <button
+        class="add-btn"
+        onclick="saveRule()"
+      >
+        SAVE RULE
+      </button>
+
+    </div>
+
+
+    <div
+      id="formError"
+      class="error"
+    ></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+
+/*
+IMPORTANT:
+Copy the SAME existing
+PUBLISHABLE KEY from your
+other PartnerDesk HTML files.
+DO NOT use the secret/service_role key.
+*/
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+let rules = [];
+
+
+const $ =
+id => document.getElementById(id);
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/[&<>"']/g,function(char){
+
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[char];
+
+    });
+
+}
+
+
+/* LOAD RULES */
+
+async function loadRules(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("service_commission_rules")
+      .select("*")
+      .order("service_name");
+
+
+  if(error){
+
+    $("formError").textContent =
+      error.message;
+
+    return;
+
+  }
+
+
+  rules =
+    data || [];
+
+  renderRules();
+
+}
+
+
+/* RENDER */
+
+function renderRules(){
+
+  const search =
+    $("search")
+      .value
+      .toLowerCase();
+
+  const filter =
+    $("statusFilter").value;
+
+
+  const list =
+    rules.filter(function(rule){
+
+      const text =
+        (
+          rule.service_name +
+          " " +
+          rule.service_category
+        ).toLowerCase();
+
+
+      return (
+        (!search ||
+        text.includes(search))
+        &&
+        (!filter ||
+        rule.status === filter)
+      );
+
+    });
+
+
+  if(!list.length){
+
+    $("rows").innerHTML =
+      `
+      <tr>
+        <td colspan="8">
+          No commission rules found.
+        </td>
+      </tr>
+      `;
+
+    return;
+
+  }
+
+
+  $("rows").innerHTML =
+    list.map(function(rule){
+
+      return `
+
+      <tr>
+
+        <td>
+          ${escapeHTML(
+            rule.service_category
+          )}
+        </td>
+
+        <td>
+          <b>
+            ${escapeHTML(
+              rule.service_name
+            )}
+          </b>
+        </td>
+
+        <td>
+          ₹${Number(
+            rule.processing_fee
+          ).toFixed(2)}
+        </td>
+
+        <td>
+          ₹${Number(
+            rule.partner_share
+          ).toFixed(2)}
+        </td>
+
+        <td>
+          ₹${Number(
+            rule.operator_cost
+          ).toFixed(2)}
+        </td>
+
+        <td>
+          ₹${Number(
+            rule.partnerdesk_share
+          ).toFixed(2)}
+        </td>
+
+        <td>
+
+          <span class="badge">
+            ${escapeHTML(
+              rule.status
+            )}
+          </span>
+
+        </td>
+
+        <td>
+
+          <button
+            class="edit-btn"
+            onclick="editRule('${rule.id}')"
+          >
+            EDIT
+          </button>
+
+        </td>
+
+      </tr>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* ADD */
+
+function openAdd(){
+
+  $("modalTitle").textContent =
+    "Add Commission Rule";
+
+  $("ruleId").value = "";
+
+  $("category").value = "";
+  $("service").value = "";
+  $("processing").value = "";
+  $("partner").value = "";
+  $("operator").value = "";
+  $("desk").value = "";
+
+  $("status").value =
+    "ACTIVE";
+
+  $("formError").textContent = "";
+
+  $("modal").style.display =
+    "flex";
+
+}
+
+
+/* EDIT */
+
+function editRule(id){
+
+  const rule =
+    rules.find(
+      item => item.id === id
+    );
+
+
+  if(!rule) return;
+
+
+  $("modalTitle").textContent =
+    "Edit Commission Rule";
+
+  $("ruleId").value =
+    rule.id;
+
+  $("category").value =
+    rule.service_category;
+
+  $("service").value =
+    rule.service_name;
+
+  $("processing").value =
+    rule.processing_fee;
+
+  $("partner").value =
+    rule.partner_share;
+
+  $("operator").value =
+    rule.operator_cost;
+
+  $("desk").value =
+    rule.partnerdesk_share;
+
+  $("status").value =
+    rule.status;
+
+  $("formError").textContent = "";
+
+  $("modal").style.display =
+    "flex";
+
+}
+
+
+/* CLOSE */
+
+function closeModal(){
+
+  $("modal").style.display =
+    "none";
+
+}
+
+
+/* SAVE */
+
+async function saveRule(){
+
+  const id =
+    $("ruleId").value;
+
+
+  const processingFee =
+    Number(
+      $("processing").value
+    ) || 0;
+
+  const partnerShare =
+    Number(
+      $("partner").value
+    ) || 0;
+
+  const operatorCost =
+    Number(
+      $("operator").value
+    ) || 0;
+
+  const partnerDeskShare =
+    Number(
+      $("desk").value
+    ) || 0;
+
+
+  /*
+  Commission validation:
+  Partner + Operator + PartnerDesk
+  MUST equal Processing Fee.
+  */
+
+  if(
+    partnerShare +
+    operatorCost +
+    partnerDeskShare !==
+    processingFee
+  ){
+
+    $("formError").textContent =
+      "Partner + Operator + PartnerDesk must equal Processing Fee.";
+
+    return;
+
+  }
+
+
+  const payload = {
+
+    service_category:
+      $("category").value.trim(),
+
+    service_name:
+      $("service").value.trim(),
+
+    processing_fee:
+      processingFee,
+
+    partner_share:
+      partnerShare,
+
+    operator_cost:
+      operatorCost,
+
+    partnerdesk_share:
+      partnerDeskShare,
+
+    status:
+      $("status").value,
+
+    updated_at:
+      new Date().toISOString()
+
+  };
+
+
+  if(
+    !payload.service_category ||
+    !payload.service_name
+  ){
+
+    $("formError").textContent =
+      "Category and Service Name are required.";
+
+    return;
+
+  }
+
+
+  let response;
+
+
+  if(id){
+
+    response =
+      await db
+        .from(
+          "service_commission_rules"
+        )
+        .update(payload)
+        .eq(
+          "id",
+          id
+        );
+
+  }else{
+
+    response =
+      await db
+        .from(
+          "service_commission_rules"
+        )
+        .insert(payload);
+
+  }
+
+
+  if(response.error){
+
+    $("formError").textContent =
+      response.error.message;
+
+    return;
+
+  }
+
+
+  closeModal();
+
+  await loadRules();
+
+}
+
+
+/* LOGOUT */
+
+async function logout(){
+
+  await db.auth.signOut();
+
+  location.reload();
+
+}
+
+
+/* SEARCH */
+
+$("search")
+  .addEventListener(
+    "input",
+    renderRules
+  );
+
+
+$("statusFilter")
+  .addEventListener(
+    "change",
+    renderRules
+  );
+
+
+/* LOGIN */
+
+$("loginBtn")
+  .addEventListener(
+    "click",
+    async function(){
+
+      $("loginError").textContent = "";
+
+
+      const {
+        error
+      } =
+        await db.auth.signInWithPassword({
+
+          email:
+            $("email").value,
+
+          password:
+            $("password").value
+
+        });
+
+
+      if(error){
+
+        $("loginError").textContent =
+          error.message;
+
+        return;
+
+      }
+
+
+      $("loginBox").style.display =
+        "none";
+
+      $("app").style.display =
+        "block";
+
+
+      loadRules();
+
+    }
+  );
+
+
+/* EXISTING SESSION */
+
+(async function(){
+
+  const {
+    data
+  } =
+    await db.auth.getSession();
+
+
+  if(data.session){
+
+    $("loginBox").style.display =
+      "none";
+
+    $("app").style.display =
+      "block";
+
+    loadRules();
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
