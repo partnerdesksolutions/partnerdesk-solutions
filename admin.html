@@ -23,7 +23,7 @@ body{
 
 .header{
   background:#102a56;
-  color:white;
+  color:#fff;
   padding:18px 5%;
   font-size:22px;
   font-weight:800;
@@ -36,32 +36,32 @@ body{
 .login-box{
   max-width:420px;
   margin:80px auto;
-  background:white;
+  background:#fff;
   padding:30px;
   border-radius:14px;
   box-shadow:0 8px 30px rgba(0,0,0,.08);
 }
 
-h1{
+h1,h2{
   color:#102a56;
-  margin-bottom:10px;
 }
 
 label{
   display:block;
   font-weight:700;
-  margin:16px 0 7px;
+  margin:15px 0 7px;
 }
 
-input{
+input,select,textarea{
   width:100%;
   padding:12px;
   border:1px solid #d5dce5;
   border-radius:8px;
+  font:inherit;
 }
 
 button{
-  padding:12px 18px;
+  padding:11px 17px;
   border:0;
   border-radius:8px;
   background:#102a56;
@@ -82,7 +82,7 @@ button{
 
 .dashboard{
   display:none;
-  max-width:1200px;
+  max-width:1250px;
   margin:30px auto;
   padding:0 20px;
 }
@@ -108,23 +108,43 @@ button{
   margin-top:7px;
 }
 
-.table-box{
+.panel{
   background:white;
   padding:20px;
   border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+.toolbar input{
+  flex:1;
+  min-width:240px;
+}
+
+.toolbar select{
+  max-width:190px;
+}
+
+.table-wrap{
   overflow:auto;
 }
 
 table{
   width:100%;
   border-collapse:collapse;
+  min-width:950px;
 }
 
 th,td{
   padding:13px;
   border-bottom:1px solid #e5e7eb;
   text-align:left;
-  white-space:nowrap;
 }
 
 th{
@@ -132,14 +152,73 @@ th{
   color:#344054;
 }
 
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  background:#fff3cd;
+  color:#7a5b00;
+}
+
+.view-btn{
+  background:#eef3f9;
+  color:#102a56;
+}
+
+.detail{
+  display:none;
+  margin-top:22px;
+  padding:22px;
+  background:#f8fafc;
+  border-radius:10px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  margin-top:15px;
+}
+
+.item b{
+  display:block;
+  color:#667085;
+  font-size:12px;
+  margin-bottom:4px;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+.save-btn{
+  background:#087f5b;
+}
+
+.close-btn{
+  background:#eaf0f7;
+  color:#102a56;
+}
+
 .logout{
   margin-top:20px;
 }
 
-@media(max-width:700px){
+@media(max-width:750px){
+
   .cards{
     grid-template-columns:repeat(2,1fr);
   }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
 }
 </style>
 </head>
@@ -149,6 +228,7 @@ th{
 <div class="header">
   PartnerDesk <span>Solutions</span> — Admin
 </div>
+
 
 <!-- LOGIN -->
 
@@ -181,7 +261,7 @@ th{
     LOGIN
   </button>
 
-  <div id="error" class="error"></div>
+  <div id="loginError" class="error"></div>
 
 </div>
 
@@ -192,7 +272,7 @@ th{
 
   <h1>Partner Applications</h1>
 
-  <p>Manage PartnerDesk partner applications.</p>
+  <p>Review and manage partner applications.</p>
 
 
   <div class="cards">
@@ -220,27 +300,78 @@ th{
   </div>
 
 
-  <div class="table-box">
+  <div class="panel">
 
-    <table>
+    <div class="toolbar">
 
-      <thead>
+      <input
+        id="search"
+        placeholder="Search Application ID, name, mobile..."
+      >
 
-        <tr>
-          <th>Application ID</th>
-          <th>Name</th>
-          <th>Business</th>
-          <th>District</th>
-          <th>Status</th>
-        </tr>
+      <select id="statusFilter">
 
-      </thead>
+        <option value="">All Status</option>
 
-      <tbody id="rows">
+        <option>PENDING</option>
 
-      </tbody>
+        <option>UNDER_REVIEW</option>
 
-    </table>
+        <option>VERIFIED</option>
+
+        <option>APPROVED</option>
+
+        <option>REJECTED</option>
+
+        <option>SUSPENDED</option>
+
+      </select>
+
+      <button
+        id="refreshBtn"
+        class="close-btn"
+      >
+        REFRESH
+      </button>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Application ID</th>
+
+            <th>Name</th>
+
+            <th>Business</th>
+
+            <th>District</th>
+
+            <th>Status</th>
+
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="rows"></tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- APPLICATION DETAILS -->
+
+    <div id="detail" class="detail"></div>
+
 
     <button
       id="logoutBtn"
@@ -256,34 +387,59 @@ th{
 
 <script>
 
-/* ==============================
-   SUPABASE CONFIG
-   ============================== */
+/* =========================
+   SUPABASE
+   ========================= */
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co/rest/v1/";
+
 
 /*
-IMPORTANT:
-
-Copy these TWO values from your
-working partner-registration.html
-
-Do NOT change the format.
+KEEP YOUR EXISTING
+PUBLISHABLE KEY HERE
 */
-
-const SUPABASE_URL = "https://mraofbhjvvuqncexzpfn.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
 "sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
 
 
-const db = supabase.createClient(
+const db =
+supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
 
 
-/* ==============================
+let applications = [];
+
+
+const $ =
+id => document.getElementById(id);
+
+
+function escapeHTML(value){
+
+  return String(value || "")
+    .replace(/[&<>"']/g,function(char){
+
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+
+      }[char];
+
+    });
+
+}
+
+
+/* =========================
    LOAD APPLICATIONS
-   ============================== */
+   ========================= */
 
 async function loadApplications(){
 
@@ -293,141 +449,567 @@ async function loadApplications(){
   } = await db
     .from("partner_applications")
     .select("*")
-    .order("created_at", {
-      ascending:false
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+
+  if(error){
+
+    $("loginError").textContent =
+      error.message;
+
+    console.error(error);
+
+    return;
+
+  }
+
+
+  applications =
+    data || [];
+
+  renderApplications();
+
+}
+
+
+/* =========================
+   RENDER
+   ========================= */
+
+function renderApplications(){
+
+  const search =
+    $("search")
+      .value
+      .toLowerCase();
+
+  const filter =
+    $("statusFilter")
+      .value;
+
+
+  const list =
+    applications.filter(function(app){
+
+      const text =
+        [
+          app.application_id,
+          app.full_name,
+          app.business_name,
+          app.mobile,
+          app.district
+        ]
+        .join(" ")
+        .toLowerCase();
+
+
+      return (
+
+        (!search ||
+        text.includes(search))
+
+        &&
+
+        (!filter ||
+        app.status === filter)
+
+      );
+
+    });
+
+
+  $("total").textContent =
+    applications.length;
+
+
+  $("pending").textContent =
+    applications.filter(
+      app => app.status === "PENDING"
+    ).length;
+
+
+  $("review").textContent =
+    applications.filter(
+      app => app.status === "UNDER_REVIEW"
+    ).length;
+
+
+  $("approved").textContent =
+    applications.filter(
+      app => app.status === "APPROVED"
+    ).length;
+
+
+  if(!list.length){
+
+    $("rows").innerHTML =
+      `
+      <tr>
+        <td colspan="6">
+          No applications found.
+        </td>
+      </tr>
+      `;
+
+    return;
+
+  }
+
+
+  $("rows").innerHTML =
+    list.map(function(app){
+
+      return `
+
+      <tr>
+
+        <td>
+          ${escapeHTML(app.application_id)}
+        </td>
+
+        <td>
+          ${escapeHTML(app.full_name)}
+        </td>
+
+        <td>
+          ${escapeHTML(app.business_name)}
+        </td>
+
+        <td>
+          ${escapeHTML(app.district)}
+        </td>
+
+        <td>
+
+          <span class="badge">
+
+            ${escapeHTML(app.status)}
+
+          </span>
+
+        </td>
+
+        <td>
+
+          <button
+            class="view-btn"
+            onclick="viewApplication('${app.id}')"
+          >
+            VIEW
+          </button>
+
+        </td>
+
+      </tr>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================
+   VIEW APPLICATION
+   ========================= */
+
+window.viewApplication =
+function(id){
+
+  const app =
+    applications.find(
+      item => item.id === id
+    );
+
+
+  if(!app) return;
+
+
+  $("detail").style.display =
+    "block";
+
+
+  $("detail").innerHTML = `
+
+    <h2>
+      Application Details
+    </h2>
+
+
+    <div class="grid">
+
+      <div class="item">
+
+        <b>Application ID</b>
+
+        ${escapeHTML(
+          app.application_id
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Status</b>
+
+        ${escapeHTML(
+          app.status
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Full Name</b>
+
+        ${escapeHTML(
+          app.full_name
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Business Name</b>
+
+        ${escapeHTML(
+          app.business_name
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Mobile</b>
+
+        ${escapeHTML(
+          app.mobile
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Email</b>
+
+        ${escapeHTML(
+          app.email
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Address</b>
+
+        ${escapeHTML(
+          app.address
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>District</b>
+
+        ${escapeHTML(
+          app.district
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>State</b>
+
+        ${escapeHTML(
+          app.state
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Business Type</b>
+
+        ${escapeHTML(
+          app.business_type
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Experience</b>
+
+        ${escapeHTML(
+          app.experience
+        )}
+
+      </div>
+
+
+      <div class="item">
+
+        <b>Services</b>
+
+        ${escapeHTML(
+          (app.services || [])
+          .join(", ")
+        )}
+
+      </div>
+
+    </div>
+
+
+    <label>
+      Update Status
+    </label>
+
+
+    <select id="detailStatus">
+
+      <option>PENDING</option>
+
+      <option>UNDER_REVIEW</option>
+
+      <option>VERIFIED</option>
+
+      <option>APPROVED</option>
+
+      <option>REJECTED</option>
+
+      <option>SUSPENDED</option>
+
+    </select>
+
+
+    <label>
+      Admin Remark
+    </label>
+
+
+    <textarea
+      id="detailRemark"
+      rows="4"
+      placeholder="Enter verification or review remark"
+    >${escapeHTML(
+      app.admin_remark
+    )}</textarea>
+
+
+    <div class="actions">
+
+      <button
+        class="save-btn"
+        onclick="saveApplication('${app.id}')"
+      >
+        SAVE CHANGES
+      </button>
+
+
+      <button
+        class="close-btn"
+        onclick="closeDetails()"
+      >
+        CLOSE
+      </button>
+
+    </div>
+
+  `;
+
+
+  $("detailStatus").value =
+    app.status;
+
+
+  $("detail").scrollIntoView({
+    behavior:"smooth"
+  });
+
+};
+
+
+/* =========================
+   SAVE APPLICATION
+   ========================= */
+
+window.saveApplication =
+async function(id){
+
+  const status =
+    $("detailStatus").value;
+
+
+  const admin_remark =
+    $("detailRemark").value;
+
+
+  const {
+    error
+  } = await db
+    .from("partner_applications")
+    .update({
+
+      status:
+
+        status,
+
+      admin_remark:
+
+        admin_remark,
+
+      updated_at:
+
+        new Date()
+        .toISOString()
+
+    })
+    .eq(
+      "id",
+      id
+    );
+
+
+  if(error){
+
+    alert(
+      "Update failed:\n\n" +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  alert(
+    "Application updated successfully."
+  );
+
+
+  await loadApplications();
+
+
+  viewApplication(id);
+
+};
+
+
+/* =========================
+   CLOSE DETAILS
+   ========================= */
+
+window.closeDetails =
+function(){
+
+  $("detail").style.display =
+    "none";
+
+};
+
+
+/* =========================
+   LOGIN
+   ========================= */
+
+$("loginBtn")
+.onclick =
+async function(){
+
+  $("loginError")
+    .textContent = "";
+
+
+  const {
+    error
+  } =
+    await db.auth.signInWithPassword({
+
+      email:
+        $("email").value,
+
+      password:
+        $("password").value
+
     });
 
 
   if(error){
 
-    document.getElementById("error")
-      .textContent = error.message;
-
-    console.error(error);
+    $("loginError")
+      .textContent =
+        error.message;
 
     return;
+
   }
 
 
-  document.getElementById("total")
-    .textContent = data.length;
+  $("loginBox")
+    .style.display =
+    "none";
 
 
-  document.getElementById("pending")
-    .textContent =
-      data.filter(
-        x => x.status === "PENDING"
-      ).length;
+  $("dashboard")
+    .style.display =
+    "block";
 
 
-  document.getElementById("review")
-    .textContent =
-      data.filter(
-        x => x.status === "UNDER_REVIEW"
-      ).length;
-
-
-  document.getElementById("approved")
-    .textContent =
-      data.filter(
-        x => x.status === "APPROVED"
-      ).length;
-
-
-  document.getElementById("rows")
-    .innerHTML = data.map(x => `
-
-      <tr>
-
-        <td>
-          ${x.application_id || ""}
-        </td>
-
-        <td>
-          ${x.full_name || ""}
-        </td>
-
-        <td>
-          ${x.business_name || ""}
-        </td>
-
-        <td>
-          ${x.district || ""}
-        </td>
-
-        <td>
-          ${x.status || ""}
-        </td>
-
-      </tr>
-
-    `).join("");
-
-}
-
-
-/* ==============================
-   LOGIN
-   ============================== */
-
-document
-  .getElementById("loginBtn")
-  .onclick = async function(){
-
-    const email =
-      document.getElementById("email").value;
-
-    const password =
-      document.getElementById("password").value;
-
-
-    const {
-      error
-    } = await db.auth.signInWithPassword({
-
-      email:email,
-
-      password:password
-
-    });
-
-
-    if(error){
-
-      document.getElementById("error")
-        .textContent = error.message;
-
-      return;
-    }
-
-
-    document.getElementById("loginBox")
-      .style.display = "none";
-
-
-    document.getElementById("dashboard")
-      .style.display = "block";
-
-
-    loadApplications();
+  loadApplications();
 
 };
 
 
-/* ==============================
+/* =========================
    LOGOUT
-   ============================== */
+   ========================= */
 
-document
-  .getElementById("logoutBtn")
-  .onclick = async function(){
+$("logoutBtn")
+.onclick =
+async function(){
 
-    await db.auth.signOut();
+  await db.auth.signOut();
 
-    location.reload();
+  location.reload();
 
 };
 
+
+/* =========================
+   CONTROLS
+   ========================= */
+
+$("refreshBtn")
+.onclick =
+loadApplications;
+
+
+$("search")
+.oninput =
+renderApplications;
+
+
+$("statusFilter")
+.onchange =
+renderApplications;
 
 </script>
 
