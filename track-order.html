@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Track Order | PartnerDesk Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fc;
+  color:#172033;
+}
+
+.header{
+  background:#102a56;
+  color:#fff;
+  padding:18px 5%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:21px;
+  font-weight:800;
+}
+
+.logo span{
+  color:#10a6a6;
+}
+
+.back{
+  background:#fff;
+  color:#102a56;
+  padding:9px 15px;
+  border-radius:7px;
+  text-decoration:none;
+  font-weight:700;
+}
+
+.container{
+  max-width:800px;
+  margin:40px auto;
+  padding:0 20px;
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.06);
+}
+
+h1{
+  color:#102a56;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  color:#667085;
+  margin-bottom:25px;
+}
+
+.form{
+  display:flex;
+  gap:10px;
+}
+
+input{
+  flex:1;
+  padding:13px;
+  border:1px solid #d5dce5;
+  border-radius:8px;
+  font:inherit;
+  text-transform:uppercase;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:13px 20px;
+  background:#102a56;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.error{
+  color:#b42318;
+  margin-top:18px;
+}
+
+.result{
+  display:none;
+  margin-top:28px;
+}
+
+.order-head{
+  background:#f3f7fb;
+  padding:18px;
+  border-radius:10px;
+}
+
+.order-id{
+  font-size:22px;
+  font-weight:800;
+  color:#102a56;
+}
+
+.status{
+  display:inline-block;
+  margin-top:10px;
+  padding:7px 12px;
+  border-radius:20px;
+  background:#e6f4ea;
+  color:#087f5b;
+  font-weight:700;
+  font-size:13px;
+}
+
+.timeline{
+  margin-top:25px;
+}
+
+.step{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:18px;
+  color:#98a2b3;
+  font-weight:700;
+}
+
+.dot{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:3px solid #d5dce5;
+  background:#fff;
+}
+
+.step.active{
+  color:#102a56;
+}
+
+.step.active .dot{
+  border-color:#10a6a6;
+  background:#10a6a6;
+}
+
+.details{
+  margin-top:25px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.item b{
+  display:block;
+  color:#667085;
+  font-size:12px;
+  margin-bottom:5px;
+}
+
+@media(max-width:600px){
+
+  .form{
+    flex-direction:column;
+  }
+
+  .details{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+  <div class="logo">
+    PartnerDesk <span>Solutions</span>
+  </div>
+
+  <a
+    href="partner-dashboard.html"
+    class="back"
+  >
+    DASHBOARD
+  </a>
+
+</div>
+
+
+<div class="container">
+
+<div class="card">
+
+<h1>Track Your Order</h1>
+
+<p class="subtitle">
+Enter your PartnerDesk Order ID to check the current status.
+</p>
+
+
+<div class="form">
+
+<input
+  id="orderId"
+  placeholder="PDS-2026-000001"
+>
+
+<button id="trackBtn">
+  TRACK ORDER
+</button>
+
+</div>
+
+
+<div
+  id="error"
+  class="error"
+></div>
+
+
+<div
+  id="result"
+  class="result"
+>
+
+  <div class="order-head">
+
+    <div>
+      Order ID
+    </div>
+
+    <div
+      id="displayOrderId"
+      class="order-id"
+    ></div>
+
+    <span
+      id="displayStatus"
+      class="status"
+    ></span>
+
+  </div>
+
+
+  <div class="timeline">
+
+    <div
+      class="step"
+      data-status="NEW"
+    >
+      <span class="dot"></span>
+      NEW
+    </div>
+
+    <div
+      class="step"
+      data-status="ASSIGNED"
+    >
+      <span class="dot"></span>
+      ASSIGNED
+    </div>
+
+    <div
+      class="step"
+      data-status="PROCESSING"
+    >
+      <span class="dot"></span>
+      PROCESSING
+    </div>
+
+    <div
+      class="step"
+      data-status="DOCUMENT_REQUIRED"
+    >
+      <span class="dot"></span>
+      DOCUMENT REQUIRED
+    </div>
+
+    <div
+      class="step"
+      data-status="VERIFICATION"
+    >
+      <span class="dot"></span>
+      VERIFICATION
+    </div>
+
+    <div
+      class="step"
+      data-status="COMPLETED"
+    >
+      <span class="dot"></span>
+      COMPLETED
+    </div>
+
+    <div
+      class="step"
+      data-status="DELIVERED"
+    >
+      <span class="dot"></span>
+      DELIVERED
+    </div>
+
+  </div>
+
+
+  <div class="details">
+
+    <div class="item">
+      <b>Customer</b>
+      <span id="customer"></span>
+    </div>
+
+    <div class="item">
+      <b>Service</b>
+      <span id="service"></span>
+    </div>
+
+    <div class="item">
+      <b>Payment</b>
+      <span id="payment"></span>
+    </div>
+
+    <div class="item">
+      <b>Total Amount</b>
+      ₹<span id="amount"></span>
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://mraofbhjvvuqncexzpfn.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_8U_YBekhylWgzRMbfiPd-A_niuXsWaP";
+
+
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+
+const statusOrder = [
+  "NEW",
+  "ASSIGNED",
+  "PROCESSING",
+  "DOCUMENT_REQUIRED",
+  "VERIFICATION",
+  "COMPLETED",
+  "DELIVERED"
+];
+
+
+document.getElementById(
+  "trackBtn"
+).onclick =
+async function(){
+
+  const errorBox =
+    document.getElementById("error");
+
+  errorBox.textContent = "";
+
+
+  const orderId =
+    document.getElementById(
+      "orderId"
+    ).value
+    .trim()
+    .toUpperCase();
+
+
+  if(!orderId){
+
+    errorBox.textContent =
+      "Order ID দিয়ক।";
+
+    return;
+
+  }
+
+
+  const {
+    data:{
+      user
+    }
+  } =
+    await db.auth.getUser();
+
+
+  if(!user){
+
+    window.location.href =
+      "partner-login.html";
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("orders")
+      .select("*")
+      .eq(
+        "order_id",
+        orderId
+      )
+      .single();
+
+
+  if(error || !data){
+
+    errorBox.textContent =
+      "Order পোৱা নগ'ল। Order ID পুনৰ পৰীক্ষা কৰক।";
+
+    document.getElementById(
+      "result"
+    ).style.display="none";
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    "result"
+  ).style.display="block";
+
+
+  document.getElementById(
+    "displayOrderId"
+  ).textContent =
+    data.order_id;
+
+
+  document.getElementById(
+    "displayStatus"
+  ).textContent =
+    data.order_status;
+
+
+  document.getElementById(
+    "customer"
+  ).textContent =
+    data.customer_name;
+
+
+  document.getElementById(
+    "service"
+  ).textContent =
+    data.service_name;
+
+
+  document.getElementById(
+    "payment"
+  ).textContent =
+    data.payment_status;
+
+
+  document.getElementById(
+    "amount"
+  ).textContent =
+    Number(
+      data.total_amount || 0
+    ).toFixed(2);
+
+
+  const currentIndex =
+    statusOrder.indexOf(
+      data.order_status
+    );
+
+
+  document
+    .querySelectorAll(".step")
+    .forEach(function(step){
+
+      const stepStatus =
+        step.dataset.status;
+
+      const stepIndex =
+        statusOrder.indexOf(
+          stepStatus
+        );
+
+
+      step.classList.toggle(
+        "active",
+        stepIndex <= currentIndex
+      );
+
+    });
+
+};
+
+</script>
+
+</body>
+</html>
