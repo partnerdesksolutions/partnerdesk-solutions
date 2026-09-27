@@ -649,26 +649,49 @@ function(id){
 
     <div class="grid">
 
-      <div class="item">
+<div class="item">
 
-        <b>Application ID</b>
+  <b>Application ID</b>
 
-        ${escapeHTML(
-          app.application_id
-        )}
+  ${escapeHTML(
+    app.application_id
+  )}
 
-      </div>
+</div>
 
 
-      <div class="item">
+<div class="item">
 
-        <b>Status</b>
+  <b>Partner ID</b>
 
-        ${escapeHTML(
-          app.status
-        )}
+  ${escapeHTML(
+    app.partner_id || "—"
+  )}
 
-      </div>
+</div>
+
+
+<div class="item">
+
+  <b>Status</b>
+
+  ${escapeHTML(
+    app.status
+  )}
+
+</div>
+
+
+<div class="item">
+
+  <b>Approved Date</b>
+
+  ${app.approved_at
+    ? new Date(app.approved_at).toLocaleString("en-IN")
+    : "—"
+  }
+
+</div>
 
 
       <div class="item">
